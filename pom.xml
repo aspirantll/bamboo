@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.flushest</groupId>
+	<artifactId>bamboo</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<modules>
+		<!-- 网络爬虫服务 -->
+		<module>bamboo-crawler</module>
+		<module>bamboo-runtime</module>
+		<module>bamboo-common</module>
+	</modules>
+	<packaging>pom</packaging>
+
+	<name>bamboo</name>
+	<description>千磨万击还坚劲,任尔东西南北风</description>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.5.6.RELEASE</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+
+
+
+
+</project>
