@@ -1,6 +1,6 @@
 package com.flushest.bamboo.runtime.util;
 
-import com.flushest.bamboo.runtime.service.IConfigurationService;
+import com.flushest.bamboo.runtime.common.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,30 +22,30 @@ public class ConfigCoreUtil {
     private static final String PROTOCOL_NAME = "dubbo.protocol.name";
     private static final String PROTOCOL_PORT = "dubbo.protocol.port";
 
-    private static IConfigurationService configurationService;
+    private static Configuration configuration;
 
     @Autowired
-    public void setConfigurationService(IConfigurationService configurationService) {
-        ConfigCoreUtil.configurationService = configurationService;
+    public void setConfigurationService(Configuration configuration) {
+        ConfigCoreUtil.configuration = configuration;
     }
 
     public static String getApplicationName() {
-        return configurationService.get(APPLICATION_NAME);
+        return configuration.get(APPLICATION_NAME);
     }
 
     public static String getApplicationOwner() {
-        return configurationService.get(APPLICATION_OWNER);
+        return configuration.get(APPLICATION_OWNER);
     }
 
     public static String getProtocolName() {
-        return configurationService.get(PROTOCOL_NAME);
+        return configuration.get(PROTOCOL_NAME);
     }
 
     public static int getProtocolPort() {
-        return configurationService.get(PROTOCOL_PORT,Integer.class);
+        return configuration.get(PROTOCOL_PORT,Integer.class);
     }
 
     public static String getRegistryAddress() {
-        return configurationService.get(REGISTRY_ADDRESS);
+        return configuration.get(REGISTRY_ADDRESS);
     }
 }
