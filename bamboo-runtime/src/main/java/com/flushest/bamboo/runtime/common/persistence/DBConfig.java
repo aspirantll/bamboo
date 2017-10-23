@@ -6,7 +6,7 @@ import com.flushest.bamboo.runtime.common.SqlSession;
 import com.flushest.bamboo.runtime.util.Assert;
 import com.flushest.bamboo.runtime.util.ClassUtil;
 import com.flushest.bamboo.runtime.util.StringUtil;
-import org.apache.ibatis.mapping.Environment;
+import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.defaults.DefaultSqlSessionFactory;
@@ -22,6 +22,7 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 import javax.sql.DataSource;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -142,16 +143,45 @@ public  class DBConfig {
     private void parseMapper() {
         try {
             Resource[] resources = resourcePatternResolver.getResources("classpath*:config/mappers/*.xml");
-
-
+            for(Configuration configuration : tablePrefixAndConfigurationMap.values()) {
+                parseMapperForConfiguration(configuration,resources);
+            }
         } catch (IOException e) {
             logger.error("loading mapper error",e);
         }
     }
 
-    private void mergeAnnotationToConfiguration() {
 
+    private void parseMapperForConfiguration(Configuration configuration,Resource...  resources) {
+        parseAnnotationMapper(configuration);
     }
+
+    private void parseAnnotationMapper(Configuration configuration) {
+        for(TableDefinition tableDefinition : tableDefinitions) {
+            Class<?> tableClass = tableDefinition.getTargetClass();
+
+            ParameterMap parameterMap = new ParameterMap.Builder(configuration,StringUtil.lowerCaseInitial(tableClass.getSimpleName())+"Param",tableClass,Collections.EMPTY_LIST).build();
+            configuration.addParameterMap(parameterMap);
+
+            List<ResultMapping> resultMappings = new ArrayList<>();
+            for(ColumnDefinition columnDefinition : tableDefinition.getColumnDefinitions()) {
+                Field field = columnDefinition.getField();
+
+                ResultMapping.Builder resultMappingBuilder = new ResultMapping.Builder(configuration,field.getName(),columnDefinition.getName(),field.getDeclaringClass());
+                resultMappingBuilder.jdbcType(columnDefinition.getJdbcType());
+
+                resultMappings.add(resultMappingBuilder.build());
+            }
+
+            ResultMap resultMap = new ResultMap.Builder(configuration,StringUtil.lowerCaseInitial(tableClass.getSimpleName())+"Result",tableClass,resultMappings).build();
+            configuration.addResultMap(resultMap);
+
+            MappedStatement
+        }
+    }
+
+
+
 
     private SqlSessionFactory createSqlSessionFactory(String tablePrefix, Configuration configuration) {
         SqlSessionFactory sqlSessionFactory = new DefaultSqlSessionFactory(configuration);

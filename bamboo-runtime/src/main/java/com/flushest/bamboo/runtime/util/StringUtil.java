@@ -39,4 +39,19 @@ public class StringUtil extends StringUtils {
         }
         return words;
     }
+
+    /**
+     * 首字母转小写
+     * @param src
+     * @return
+     */
+    public static String lowerCaseInitial(String src) {
+        if(!hasText(src)) return src;
+
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append(src.substring(0,1).toLowerCase());
+        stringBuffer.append(src.substring(1,src.length()));
+
+        return stringBuffer.toString();
+    }
 }

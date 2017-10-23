@@ -48,6 +48,15 @@ public class TableDefinition {
         return simpleName;
     }
 
+    public Class<?> getTargetClass() {
+        return targetClass;
+    }
+
+
+    public List<ColumnDefinition> getColumnDefinitions() {
+        return columnDefinitions;
+    }
+
     public String getTableName() {
         return ClassUtil.convertClassNameToTableName(prefix,targetClass);
     }
