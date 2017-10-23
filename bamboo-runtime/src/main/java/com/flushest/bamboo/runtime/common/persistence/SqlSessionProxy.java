@@ -1,4 +1,4 @@
-package com.flushest.bamboo.runtime.common;
+package com.flushest.bamboo.runtime.common.persistence;
 
 import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.executor.BatchResult;

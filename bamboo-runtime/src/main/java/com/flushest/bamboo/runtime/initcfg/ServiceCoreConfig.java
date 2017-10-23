@@ -5,7 +5,7 @@ import com.alibaba.dubbo.config.ProtocolConfig;
 import com.alibaba.dubbo.config.RegistryConfig;
 import com.alibaba.dubbo.config.spring.AnnotationBean;
 import com.flushest.bamboo.runtime.util.ConfigCoreUtil;
-import com.flushest.bamboo.runtime.util.ConstantUtil;
+import com.flushest.bamboo.runtime.common.Constant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -51,7 +51,7 @@ public class ServiceCoreConfig {
     public AnnotationBean annotationBean() {
         AnnotationBean annotationBean = new AnnotationBean();
 
-        annotationBean.setPackage(ConstantUtil.BASE_PACKAGE);
+        annotationBean.setPackage(Constant.BASE_PACKAGE);
 
         return annotationBean;
     }
