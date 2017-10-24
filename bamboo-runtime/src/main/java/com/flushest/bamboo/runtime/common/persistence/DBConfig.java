@@ -6,10 +6,12 @@ import com.flushest.bamboo.runtime.common.SqlSession;
 import com.flushest.bamboo.runtime.util.Assert;
 import com.flushest.bamboo.runtime.util.ClassUtil;
 import com.flushest.bamboo.runtime.util.StringUtil;
+import org.apache.ibatis.builder.StaticSqlSource;
 import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.defaults.DefaultSqlSessionFactory;
+import org.apache.ibatis.type.JdbcType;
 import org.mybatis.spring.transaction.SpringManagedTransactionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -176,9 +178,51 @@ public  class DBConfig {
             ResultMap resultMap = new ResultMap.Builder(configuration,StringUtil.lowerCaseInitial(tableClass.getSimpleName())+"Result",tableClass,resultMappings).build();
             configuration.addResultMap(resultMap);
 
-            MappedStatement
+            MappedStatement insertMs = new MappedStatement.Builder(configuration,tableDefinition.getMapperPrefix()+".insert",createInsertSqlSource(configuration,tableDefinition),SqlCommandType.INSERT).build();
+            
         }
+
+
     }
+
+
+    private SqlSource createInsertSqlSource(Configuration configuration,TableDefinition tableDefinition) {
+        StringBuffer sql = new StringBuffer();
+        sql.append("insert into ")
+                .append(tableDefinition.getTableName())
+                .append("(");
+
+        StringBuffer fields = new StringBuffer();
+        StringBuffer values = new StringBuffer();
+        List<ParameterMapping> parameterMappings = new ArrayList<>();
+
+        List<ColumnDefinition> columnDefinitions = tableDefinition.getColumnDefinitions();
+        for(ColumnDefinition columnDefinition : columnDefinitions) {
+            Field field = columnDefinition.getField();
+            String property = field.getName();
+            String column = columnDefinition.getName();
+            JdbcType jdbcType = columnDefinition.getJdbcType();
+
+            fields.append(column).append(",");
+            values.append("?,");
+
+            ParameterMapping.Builder builder = new ParameterMapping.Builder(configuration,property,field.getDeclaringClass());
+            builder.jdbcType(jdbcType);
+            parameterMappings.add(builder.build());
+        }
+
+        fields.deleteCharAt(fields.length()-1);
+        values.deleteCharAt(values.length()-1);
+
+        sql.append(fields)
+                .append(")")
+                .append(" values(")
+                .append(values)
+                .append(")");
+
+        return new StaticSqlSource(configuration,sql.toString(),parameterMappings);
+    }
+
 
 
 

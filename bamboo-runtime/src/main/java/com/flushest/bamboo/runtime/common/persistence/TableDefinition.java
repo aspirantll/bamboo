@@ -60,4 +60,8 @@ public class TableDefinition {
     public String getTableName() {
         return ClassUtil.convertClassNameToTableName(prefix,targetClass);
     }
+
+    public String getMapperPrefix() {
+        return StringUtil.lowerCaseInitial(targetClass.getSimpleName())+".mapper";
+    }
 }
