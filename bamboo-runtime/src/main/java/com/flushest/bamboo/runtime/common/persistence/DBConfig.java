@@ -2,20 +2,19 @@ package com.flushest.bamboo.runtime.common.persistence;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.flushest.bamboo.runtime.common.Constant;
-import com.flushest.bamboo.runtime.common.SqlSession;
+import com.flushest.bamboo.runtime.common.persistence.definitions.TableDefinition;
+import com.flushest.bamboo.runtime.exception.BambooRuntimeException;
 import com.flushest.bamboo.runtime.util.Assert;
 import com.flushest.bamboo.runtime.util.ClassUtil;
 import com.flushest.bamboo.runtime.util.StringUtil;
-import org.apache.ibatis.builder.StaticSqlSource;
+import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.defaults.DefaultSqlSessionFactory;
-import org.apache.ibatis.type.JdbcType;
 import org.mybatis.spring.transaction.SpringManagedTransactionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -24,7 +23,7 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 import javax.sql.DataSource;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.Field;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -40,11 +39,17 @@ public  class DBConfig {
     private static final String PREFIX_PROPERTIES = "bamboo.jdbc";
     private static final String PROPERTIES_FILENAME = PREFIX_PROPERTIES +".properties";
     private static final String DB_NAMES_ITEM = PREFIX_PROPERTIES + ".names";
-    private static final String SUFFIX_TABLE_PREFIX_ITEM = "tablePrefix";
+    private static final String DB_TYPE_ITEM = PREFIX_PROPERTIES + ".dbType";
+    private static final String SUFFIX_TABLE_PREFIX_ITEM = ".tablePrefix";
     private static final String SUFFIX_URL_ITEM = ".url";
     private static final String SUFFIX_USER_ITEM = ".user";
     private static final String SUFFIX_PASSWORD_ITEM = ".password";
     private static final String DB_NAMES_SEPARATOR = ",";
+
+    private static final Map<String,String> dbTypeAndUrlPrefixMap = new HashMap<>();
+    static {
+        dbTypeAndUrlPrefixMap.put("oracle","jdbc:oracle:thin:@");
+    }
 
     private Properties properties;
     private ResourcePatternResolver resourcePatternResolver;
@@ -61,6 +66,7 @@ public  class DBConfig {
         createConfigurations();
         scanAnnotations();
         parseMapper();
+        createSqlSessionFactories();
     }
 
     private void prepare() {
@@ -80,6 +86,11 @@ public  class DBConfig {
     }
 
     private DataSource createDataSource(String name) {
+        String dbType = properties.getProperty(DB_TYPE_ITEM);
+        Assert.notHasText(dbType,String.format("数据库类型dbType不能为空,请检查配置项[%s]",DB_NAMES_ITEM));
+        String dbUrlPrefix = dbTypeAndUrlPrefixMap.get(dbType.toLowerCase());
+        Assert.notNull(dbUrlPrefix,String.format("数据库类型dbType必须时%s中一个,请检查配置项[%s]",dbTypeAndUrlPrefixMap.keySet(),DB_NAMES_ITEM));
+
         String prefix = PREFIX_PROPERTIES+"."+name;
 
         String url = properties.getProperty(prefix+SUFFIX_URL_ITEM);
@@ -92,9 +103,15 @@ public  class DBConfig {
         Assert.notHasText(password,String.format("数据库password不能为空，请检查[%s]配置项",prefix+SUFFIX_PASSWORD_ITEM));
 
         DruidDataSource dataSource = new DruidDataSource();
-        dataSource.setUrl(url);
+        dataSource.setUrl(dbUrlPrefix+url);
         dataSource.setUsername(user);
         dataSource.setPassword(password);
+        try {
+            dataSource.init();
+        } catch (SQLException e) {
+            logger.error(String.format("初始化数据源[%s]失败",name),e);
+            throw new BambooRuntimeException(String.format("初始化数据源[%s]失败",name),e);
+        }
 
         nameAndDataSourceMap.put(name,dataSource);
 
@@ -127,7 +144,7 @@ public  class DBConfig {
         tableDefinitions = new ArrayList<>();
 
         try {
-            Resource[] resources = resourcePatternResolver.getResources(ClassUtil.convertClassNameToResourcePath(Constant.BASE_PACKAGE));
+            Resource[] resources = resourcePatternResolver.getResources("classpath*:"+ClassUtil.convertClassNameToResourcePath(Constant.BASE_PACKAGE)+"/**/*.class");
             for(Resource resource : resources) {
                 ScannedPersistenceDefinition scanner = new ScannedPersistenceDefinition(resource);
                 TableDefinition tableDefinition = scanner.scan();
@@ -144,7 +161,7 @@ public  class DBConfig {
 
     private void parseMapper() {
         try {
-            Resource[] resources = resourcePatternResolver.getResources("classpath*:config/mappers/*.xml");
+            Resource[] resources = resourcePatternResolver.getResources("classpath*:configs/mappers/*.xml");
             for(Configuration configuration : tablePrefixAndConfigurationMap.values()) {
                 parseMapperForConfiguration(configuration,resources);
             }
@@ -154,84 +171,26 @@ public  class DBConfig {
     }
 
 
-    private void parseMapperForConfiguration(Configuration configuration,Resource...  resources) {
+    private void parseMapperForConfiguration(Configuration configuration,Resource...  resources) throws IOException {
         parseAnnotationMapper(configuration);
+
+        for(Resource resource : resources) {
+            XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(resource.getInputStream(), configuration, resource.toString(), configuration.getSqlFragments());
+            xmlMapperBuilder.parse();
+        }
     }
 
     private void parseAnnotationMapper(Configuration configuration) {
         for(TableDefinition tableDefinition : tableDefinitions) {
-            Class<?> tableClass = tableDefinition.getTargetClass();
-
-            ParameterMap parameterMap = new ParameterMap.Builder(configuration,StringUtil.lowerCaseInitial(tableClass.getSimpleName())+"Param",tableClass,Collections.EMPTY_LIST).build();
-            configuration.addParameterMap(parameterMap);
-
-            List<ResultMapping> resultMappings = new ArrayList<>();
-            for(ColumnDefinition columnDefinition : tableDefinition.getColumnDefinitions()) {
-                Field field = columnDefinition.getField();
-
-                ResultMapping.Builder resultMappingBuilder = new ResultMapping.Builder(configuration,field.getName(),columnDefinition.getName(),field.getDeclaringClass());
-                resultMappingBuilder.jdbcType(columnDefinition.getJdbcType());
-
-                resultMappings.add(resultMappingBuilder.build());
-            }
-
-            ResultMap resultMap = new ResultMap.Builder(configuration,StringUtil.lowerCaseInitial(tableClass.getSimpleName())+"Result",tableClass,resultMappings).build();
-            configuration.addResultMap(resultMap);
-
-            MappedStatement insertMs = new MappedStatement.Builder(configuration,tableDefinition.getMapperPrefix()+".insert",createInsertSqlSource(configuration,tableDefinition),SqlCommandType.INSERT).build();
-            
+            TableDefinitionParser tableDefinitionParser = new TableDefinitionParser(configuration,tableDefinition);
+            tableDefinitionParser.parse();
         }
-
-
     }
 
-
-    private SqlSource createInsertSqlSource(Configuration configuration,TableDefinition tableDefinition) {
-        StringBuffer sql = new StringBuffer();
-        sql.append("insert into ")
-                .append(tableDefinition.getTableName())
-                .append("(");
-
-        StringBuffer fields = new StringBuffer();
-        StringBuffer values = new StringBuffer();
-        List<ParameterMapping> parameterMappings = new ArrayList<>();
-
-        List<ColumnDefinition> columnDefinitions = tableDefinition.getColumnDefinitions();
-        for(ColumnDefinition columnDefinition : columnDefinitions) {
-            Field field = columnDefinition.getField();
-            String property = field.getName();
-            String column = columnDefinition.getName();
-            JdbcType jdbcType = columnDefinition.getJdbcType();
-
-            fields.append(column).append(",");
-            values.append("?,");
-
-            ParameterMapping.Builder builder = new ParameterMapping.Builder(configuration,property,field.getDeclaringClass());
-            builder.jdbcType(jdbcType);
-            parameterMappings.add(builder.build());
+    private void createSqlSessionFactories() {
+        for(Map.Entry<String,Configuration> entry : tablePrefixAndConfigurationMap.entrySet()) {
+            SqlSessionFactory sqlSessionFactory = new DefaultSqlSessionFactory(entry.getValue());
+            SqlSessionFactoryProxy.registerSqlSessionFactory(entry.getKey(),sqlSessionFactory);
         }
-
-        fields.deleteCharAt(fields.length()-1);
-        values.deleteCharAt(values.length()-1);
-
-        sql.append(fields)
-                .append(")")
-                .append(" values(")
-                .append(values)
-                .append(")");
-
-        return new StaticSqlSource(configuration,sql.toString(),parameterMappings);
     }
-
-
-
-
-
-    private SqlSessionFactory createSqlSessionFactory(String tablePrefix, Configuration configuration) {
-        SqlSessionFactory sqlSessionFactory = new DefaultSqlSessionFactory(configuration);
-        SqlSessionFactoryProxy.registerSqlSessionFactory(tablePrefix,sqlSessionFactory);
-        return sqlSessionFactory;
-    }
-
-
 }

@@ -48,7 +48,7 @@ public class ClassUtil extends ClassUtils{
         String name = clazz.getSimpleName();
         List<String> words = StringUtil.splitNameAccordingCamelCase(name);
         if(StringUtil.hasText(prefix)) {
-            words.set(0,prefix);
+            words.add(0,prefix);
         }
         return String.join("_",words.toArray(new String[0]));
     }

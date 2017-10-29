@@ -1,8 +1,12 @@
 package com.flushest.bamboo.runtime.common.persistence;
 
-import com.alibaba.dubbo.config.spring.AnnotationBean;
 import com.flushest.bamboo.runtime.annotation.Column;
+import com.flushest.bamboo.runtime.annotation.Id;
 import com.flushest.bamboo.runtime.annotation.Table;
+import com.flushest.bamboo.runtime.common.persistence.definitions.ColumnDefinition;
+import com.flushest.bamboo.runtime.common.persistence.definitions.IdDefinition;
+import com.flushest.bamboo.runtime.common.persistence.definitions.TableDefinition;
+import com.flushest.bamboo.runtime.exception.BambooRuntimeException;
 import com.flushest.bamboo.runtime.util.ClassUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,14 +47,24 @@ public class ScannedPersistenceDefinition {
             Table table = clazz.getAnnotation(Table.class);
 
             final List<ColumnDefinition> columnDefinitions = new ArrayList<>();
+            final IdDefinition idDefinition = new IdDefinition();
             ReflectionUtils.doWithLocalFields(clazz,(Field field)->{
                 Column column = field.getAnnotation(Column.class);
                 if(column!=null) {
                     columnDefinitions.add(new ColumnDefinition(column.name(),column.jdbcType(),field));
                 }
+
+                Id id = field.getAnnotation(Id.class);
+                if(id!=null) {
+                    if(idDefinition.getField()!=null||idDefinition.getStrategy()!=null) {
+                        throw new BambooRuntimeException(String.format("一张表里面只能有一个主键id，请检查[%s]中@Id注解个数",clazz.getName()));
+                    }
+                    idDefinition.setField(field);
+                    idDefinition.setStrategy(id.strategy());
+                }
             });
 
-            return new TableDefinition(table.tablePrefix(),table.simpleName(),clazz,columnDefinitions);
+            return new TableDefinition(table.tablePrefix(),table.simpleName(),clazz,columnDefinitions,idDefinition);
         }
         return null;
     }
