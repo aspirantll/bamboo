@@ -8,6 +8,9 @@ import com.flushest.bamboo.runtime.util.StringUtil;
 import org.apache.ibatis.builder.StaticSqlSource;
 import org.apache.ibatis.executor.keygen.SelectKeyGenerator;
 import org.apache.ibatis.mapping.*;
+import org.apache.ibatis.parsing.XPathParser;
+import org.apache.ibatis.scripting.LanguageDriver;
+import org.apache.ibatis.scripting.xmltags.XMLLanguageDriver;
 import org.apache.ibatis.session.Configuration;
 
 import java.lang.reflect.Field;
@@ -43,6 +46,9 @@ public class TableDefinitionParser {
         parseParameterMap();
         parseResultMap();
         parseInsertMappedStatement();
+        parseDeleteMappedStatement();
+        parseUpdateMappedStatement();
+        parseQueryMappedStatement();
     }
 
     private void prepare() {
@@ -152,4 +158,108 @@ public class TableDefinitionParser {
         }
         return keySql;
     }
+
+    private void parseDeleteMappedStatement() {
+        if(!idDefinition.isEmpty()) {//不存在指定id便不添加删除statement
+            List<ParameterMapping> parameterMappings = new ArrayList<>();
+            Field idField = idDefinition.getField();
+            parameterMappings.add(new ParameterMapping.Builder(configuration,idField.getName(),idField.getType()).build());
+
+            String deleteSql = generateDeleteSql();
+            StaticSqlSource sqlSource = new StaticSqlSource(configuration,deleteSql,parameterMappings);
+
+            MappedStatement.Builder deleteMsBuilder = new MappedStatement.Builder(configuration,tableDefinition.getMapperName()+".delete",sqlSource,SqlCommandType.DELETE);
+
+            configuration.addMappedStatement(deleteMsBuilder.build());
+        }
+    }
+
+    private String generateDeleteSql() {
+        StringBuffer deleteSql = new StringBuffer();
+        deleteSql.append("delete from ")
+                .append(tableName)
+                .append(" where ")
+                .append(idDefinition.getColumnName())
+                .append("=?");
+        return deleteSql.toString();
+    }
+
+    private void parseUpdateMappedStatement() {
+        if(!idDefinition.isEmpty()) {//不存在指定id便不添加更新statement
+            String updateXml = generateUpdateSql();
+            XPathParser pathParser = new XPathParser(updateXml);
+            LanguageDriver languageDriver = new XMLLanguageDriver();
+            SqlSource sqlSource = languageDriver.createSqlSource(configuration,pathParser.evalNode("/update"),tableClass);
+            MappedStatement.Builder updateMsBuilder = new MappedStatement.Builder(configuration,tableDefinition.getMapperName()+".update",sqlSource,SqlCommandType.UPDATE);
+            configuration.addMappedStatement(updateMsBuilder.build());
+        }
+
+    }
+
+    private String generateUpdateSql() {
+        StringBuffer updateSql = new StringBuffer();
+        updateSql.append("<update id=\"update\" parameterMap=\"")
+                .append(tableDefinition.getParamMapName())
+                .append("\">update ")
+                .append(tableName)
+                .append(" <set> ");
+
+        for (ColumnDefinition columnDefinition : columnDefinitions) {
+            Field field = columnDefinition.getField();
+
+            if(idDefinition.getField().equals(field)) continue;
+
+            updateSql.append("<if test=\"")
+                    .append(field.getName())
+                    .append("!=null\">")
+                    .append(columnDefinition.getName())
+                    .append("=#{")
+                    .append(field.getName())
+                    .append(",jdbcType=")
+                    .append(columnDefinition.getJdbcType().name())
+                    .append("},")
+                    .append("</if> ");
+        }
+
+        updateSql.append("</set>");
+
+        Field idField = idDefinition.getField();
+
+        updateSql.append(" where ")
+                .append(idDefinition.getColumnName())
+                .append("=#{")
+                .append(idField.getName())
+                .append("}");
+
+        updateSql.append("</update>");
+
+        return updateSql.toString();
+    }
+
+    private void parseQueryMappedStatement() {
+        if(!idDefinition.isEmpty()) {//不存在指定id便不添加查询statement
+            List<ParameterMapping> parameterMappings = new ArrayList<>();
+            Field idField = idDefinition.getField();
+            parameterMappings.add(new ParameterMapping.Builder(configuration,idField.getName(),idField.getType()).build());
+
+            String querySql = generateQuerySql();
+            StaticSqlSource sqlSource = new StaticSqlSource(configuration,querySql,parameterMappings);
+
+            MappedStatement.Builder queryMsBuilder = new MappedStatement.Builder(configuration,tableDefinition.getMapperName()+".query",sqlSource,SqlCommandType.DELETE);
+            queryMsBuilder.resultMaps(Arrays.asList(new ResultMap[]{configuration.getResultMap(tableDefinition.getResultMapName())}));
+
+            configuration.addMappedStatement(queryMsBuilder.build());
+        }
+    }
+
+    private String generateQuerySql() {
+        StringBuffer querySql = new StringBuffer();
+        querySql.append("select * from ")
+                .append(tableName)
+                .append(" where ")
+                .append(idDefinition.getColumnName())
+                .append("=?");
+        return querySql.toString();
+    }
+
 }

@@ -35,7 +35,7 @@ public class ColumnDefinition {
         Assert.notNull(field,"field must be not null");
 
         this.name = StringUtil.hasText(name)?name.trim(): ClassUtil.convertFieldNameToColumnName(field);
-        this.jdbcType = jdbcType.equals(JdbcType.OTHER)?classAndJdbcTypeMap.get(field.getDeclaringClass()):jdbcType;
+        this.jdbcType = jdbcType.equals(JdbcType.OTHER)?classAndJdbcTypeMap.get(field.getType()):jdbcType;
         this.field = field;
     }
 

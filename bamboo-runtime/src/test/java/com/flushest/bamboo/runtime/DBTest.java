@@ -29,4 +29,14 @@ public class DBTest {
         user.setPassword("bamboo");
         dbSession.insert("user.mapper.insert",user);
     }
+
+    @Test
+    public void QDUTest() {
+        User user = new User();
+        user.setUserName("bamboo");
+        user.setPassword("123456");
+        dbSession.update("user.mapper.update",user);
+        System.out.print(dbSession.selectList("user.mapper.query","bamboo"));
+        dbSession.delete("user.mapper.delete","bamboo");
+    }
 }

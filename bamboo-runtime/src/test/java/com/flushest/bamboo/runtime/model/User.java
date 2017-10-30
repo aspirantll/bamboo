@@ -1,6 +1,7 @@
 package com.flushest.bamboo.runtime.model;
 
 import com.flushest.bamboo.runtime.annotation.Column;
+import com.flushest.bamboo.runtime.annotation.Id;
 import com.flushest.bamboo.runtime.annotation.Table;
 
 /**
@@ -8,6 +9,7 @@ import com.flushest.bamboo.runtime.annotation.Table;
  */
 @Table(tablePrefix = "t")
 public class User {
+    @Id
     @Column
     private String userName;
     @Column

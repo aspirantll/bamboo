@@ -51,16 +51,17 @@ public class ScannedPersistenceDefinition {
             ReflectionUtils.doWithLocalFields(clazz,(Field field)->{
                 Column column = field.getAnnotation(Column.class);
                 if(column!=null) {
-                    columnDefinitions.add(new ColumnDefinition(column.name(),column.jdbcType(),field));
-                }
-
-                Id id = field.getAnnotation(Id.class);
-                if(id!=null) {
-                    if(idDefinition.getField()!=null||idDefinition.getStrategy()!=null) {
-                        throw new BambooRuntimeException(String.format("一张表里面只能有一个主键id，请检查[%s]中@Id注解个数",clazz.getName()));
+                    ColumnDefinition columnDefinition = new ColumnDefinition(column.name(),column.jdbcType(),field);
+                    columnDefinitions.add(columnDefinition);
+                    Id id = field.getAnnotation(Id.class);
+                    if(id!=null) {
+                        if(idDefinition.getField()!=null||idDefinition.getStrategy()!=null) {
+                            throw new BambooRuntimeException(String.format("一张表里面只能有一个主键id，请检查[%s]中@Id注解个数",clazz.getName()));
+                        }
+                        idDefinition.setColumnName(columnDefinition.getName());
+                        idDefinition.setField(field);
+                        idDefinition.setStrategy(id.strategy());
                     }
-                    idDefinition.setField(field);
-                    idDefinition.setStrategy(id.strategy());
                 }
             });
 

@@ -12,6 +12,8 @@ public class IdDefinition {
 
     private GenerateStrategy strategy;
 
+    private String columnName;
+
     public IdDefinition() {
 
     }
@@ -35,6 +37,14 @@ public class IdDefinition {
 
     public void setStrategy(GenerateStrategy strategy) {
         this.strategy = strategy;
+    }
+
+    public String getColumnName() {
+        return columnName;
+    }
+
+    public void setColumnName(String columnName) {
+        this.columnName = columnName;
     }
 
     public boolean isEmpty() {
