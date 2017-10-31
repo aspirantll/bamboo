@@ -1,6 +1,7 @@
 package com.flushest.bamboo.runtime;
 
 import com.flushest.bamboo.runtime.common.persistence.DBSession;
+import com.flushest.bamboo.runtime.dao.UserDao;
 import com.flushest.bamboo.runtime.initcfg.StartUpConfig;
 import com.flushest.bamboo.runtime.model.User;
 import org.junit.Test;
@@ -20,14 +21,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class DBTest {
 
     @Autowired
-    private DBSession dbSession;
+    private UserDao userDao;
 
     @Test
     public void insertTest() {
         User user = new User();
         user.setUserName("bamboo");
         user.setPassword("bamboo");
-        dbSession.insert("user.mapper.insert",user);
+        userDao.insert(user);
     }
 
     @Test
@@ -35,8 +36,7 @@ public class DBTest {
         User user = new User();
         user.setUserName("bamboo");
         user.setPassword("123456");
-        dbSession.update("user.mapper.update",user);
-        System.out.print(dbSession.selectList("user.mapper.query","bamboo"));
-        dbSession.delete("user.mapper.delete","bamboo");
+        userDao.update(user);
+        System.out.print(userDao.query("bamboo"));
     }
 }

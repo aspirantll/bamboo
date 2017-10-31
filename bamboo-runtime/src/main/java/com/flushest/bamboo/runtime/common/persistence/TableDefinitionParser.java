@@ -4,6 +4,7 @@ import com.flushest.bamboo.runtime.common.persistence.definitions.ColumnDefiniti
 import com.flushest.bamboo.runtime.common.persistence.definitions.IdDefinition;
 import com.flushest.bamboo.runtime.common.persistence.definitions.TableDefinition;
 import com.flushest.bamboo.runtime.util.Assert;
+import com.flushest.bamboo.runtime.util.ClassUtil;
 import com.flushest.bamboo.runtime.util.StringUtil;
 import org.apache.ibatis.builder.StaticSqlSource;
 import org.apache.ibatis.executor.keygen.SelectKeyGenerator;
@@ -55,7 +56,7 @@ public class TableDefinitionParser {
         tableClass = tableDefinition.getTargetClass();
         tableName = tableDefinition.getTableName();
         simpleClassName = StringUtil.lowerCaseInitial(tableClass.getSimpleName());
-        mapperName = simpleClassName+".mapper";
+        mapperName = ClassUtil.convertClassNameToMapperName(tableClass);
         columnDefinitions = tableDefinition.getColumnDefinitions();
         idDefinition = tableDefinition.getIdDefinition();
     }

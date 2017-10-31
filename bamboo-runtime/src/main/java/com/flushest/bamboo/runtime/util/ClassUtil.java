@@ -21,12 +21,12 @@ public class ClassUtil extends ClassUtils{
      * @param index 泛型在列表中位置
      * @return
      */
-    public static <T> Class<T> getGenericClass(Class clazz,int index) {
-        ResolvableType[] types = getGenericTypes(clazz);
+    public static <T> Class<T> getGenericClass(Class clazz,Class superClass,int index) {
+        ResolvableType[] types = getGenericTypes(clazz,superClass);
         if (index>=types.length) {
             throw new IllegalArgumentException("the value of argument [index] is out of bounds in method:ClassUtil.getGenericClass().");
         }
-        return (Class<T>) types[index].getType();
+        return (Class<T>) types[index].resolve();
     }
 
     /**
@@ -34,9 +34,9 @@ public class ClassUtil extends ClassUtils{
      * @param clazz
      * @return
      */
-    public static ResolvableType[] getGenericTypes(Class clazz) {
+    public static ResolvableType[] getGenericTypes(Class clazz,Class superClass) {
         Assert.notNull(clazz,"the argument [clazz] can not be null in method:ClassUtil.getGenericClass().");
-        return ResolvableType.forType(clazz).getGenerics();
+        return ResolvableType.forClass(clazz).as(superClass).getGenerics();
     }
 
     /**
@@ -62,5 +62,14 @@ public class ClassUtil extends ClassUtils{
         String name = field.getName();
         List<String> words = StringUtil.splitNameAccordingCamelCase(name);
         return String.join("_",words.toArray(new String[0]));
+    }
+
+    /**
+     * 转换类名到Mapper名
+     * @param clazz
+     * @return
+     */
+    public static String convertClassNameToMapperName(Class<?> clazz) {
+        return StringUtil.lowerCaseInitial(clazz.getSimpleName())+".mapper";
     }
 }
