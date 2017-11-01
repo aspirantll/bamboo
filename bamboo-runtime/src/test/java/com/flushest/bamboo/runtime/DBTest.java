@@ -1,8 +1,10 @@
 package com.flushest.bamboo.runtime;
 
 import com.flushest.bamboo.runtime.common.persistence.DBSession;
+import com.flushest.bamboo.runtime.dao.AnotherDao;
 import com.flushest.bamboo.runtime.dao.UserDao;
 import com.flushest.bamboo.runtime.initcfg.StartUpConfig;
+import com.flushest.bamboo.runtime.model.Another;
 import com.flushest.bamboo.runtime.model.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,6 +24,8 @@ public class DBTest {
 
     @Autowired
     private UserDao userDao;
+    @Autowired
+    private AnotherDao anotherDao;
 
     @Test
     public void insertTest() {
@@ -38,5 +42,11 @@ public class DBTest {
         user.setPassword("123456");
         userDao.update(user);
         System.out.print(userDao.query("bamboo"));
+    }
+
+    @Test
+    public void trasactionTest() {
+        userDao.transaction();
+        anotherDao.transaction();
     }
 }

@@ -12,7 +12,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
 
+import javax.sql.DataSource;
 import java.io.StringReader;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,6 +26,7 @@ public class SqlSessionFactoryProxy {
     private static final Logger logger = LoggerFactory.getLogger(SqlSessionFactoryProxy.class);
 
     private static Map<String,SqlSessionFactory> tablePrefixAndSqlSessionFactoryMap = new ConcurrentHashMap<>();
+    private static Map<String,DataSource> tablePrefixAndDataSourceMap = new ConcurrentHashMap<>();
 
     private static CCJSqlParserManager parserManager = new CCJSqlParserManager();
     private static TablesNamesFinder tablesNamesFinder = new TablesNamesFinder();
@@ -32,7 +35,15 @@ public class SqlSessionFactoryProxy {
         tablePrefixAndSqlSessionFactoryMap.put(tablePrefix,sqlSessionFactory);
     }
 
-    public static SqlSessionFactory getSqlSessionFactory(String statementId, Object parameterObject) throws JSQLParserException {
+    public static void registerDataSource(String tablePrefix,DataSource dataSource) {
+        tablePrefixAndDataSourceMap.put(tablePrefix,dataSource);
+    }
+
+    public static Map<String,DataSource> getDataSourceMap() {
+        return tablePrefixAndDataSourceMap;
+    }
+
+    public static SqlSessionFactory getSqlSessionFactory(String statementId, Object parameterObject) throws JSQLParserException, SQLException {
         for(Map.Entry<String,SqlSessionFactory> entry : tablePrefixAndSqlSessionFactoryMap.entrySet()) {
             String tablePrefix = entry.getKey();
             SqlSessionFactory sqlSessionFactory = entry.getValue();
@@ -43,6 +54,8 @@ public class SqlSessionFactoryProxy {
             List<String> tableNames = tablesNamesFinder.getTableList(statement);
 
             if(tableNames!=null&&!tableNames.isEmpty()&&tableNames.get(0).toLowerCase().startsWith(tablePrefix.toLowerCase())) {
+                DataSource dataSource = tablePrefixAndDataSourceMap.get(tablePrefix);
+                TransactionInfoUtil.changeDataSource(dataSource);
                 return sqlSessionFactory;
             }
         }

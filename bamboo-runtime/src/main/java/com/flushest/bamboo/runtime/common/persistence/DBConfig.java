@@ -87,9 +87,9 @@ public  class DBConfig {
 
     private DataSource createDataSource(String name) {
         String dbType = properties.getProperty(DB_TYPE_ITEM);
-        Assert.notHasText(dbType,String.format("数据库类型dbType不能为空,请检查配置项[%s]",DB_NAMES_ITEM));
+        Assert.notHasText(dbType,String.format("数据库类型dbType不能为空,请检查配置项[%s]",DB_TYPE_ITEM));
         String dbUrlPrefix = dbTypeAndUrlPrefixMap.get(dbType.toLowerCase());
-        Assert.notNull(dbUrlPrefix,String.format("数据库类型dbType必须时%s中一个,请检查配置项[%s]",dbTypeAndUrlPrefixMap.keySet(),DB_NAMES_ITEM));
+        Assert.notNull(dbUrlPrefix,String.format("数据库类型dbType必须时%s中一个,请检查配置项[%s]",dbTypeAndUrlPrefixMap.keySet(),DB_TYPE_ITEM));
 
         String prefix = PREFIX_PROPERTIES+"."+name;
 
@@ -128,6 +128,8 @@ public  class DBConfig {
                     Assert.notHasText(tablePrefix,String.format("数据库tablePrefix为空，请检查配置项[%s]",PREFIX_PROPERTIES+"."+name+SUFFIX_TABLE_PREFIX_ITEM));
 
                     DataSource dataSource = createDataSource(name);
+
+                    SqlSessionFactoryProxy.registerDataSource(tablePrefix,dataSource);
 
                     Configuration configuration = new Configuration();
 

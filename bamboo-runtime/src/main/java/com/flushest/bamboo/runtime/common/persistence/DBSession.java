@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -34,6 +35,9 @@ public class DBSession {
         } catch (JSQLParserException e) {
             logger.error(String.format("parse sql failed for statement[%s]",statementId));
             throw new BambooRuntimeException("parse sql failed",e);
+        } catch (SQLException e) {
+            logger.error(String.format("occurred exception at changing datasource for transaction"),e);
+            throw new BambooRuntimeException("occurred exception at changing datasource for transaction",e);
         }
     }
 
