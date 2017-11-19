@@ -9,7 +9,7 @@
 	<modules>
 		<!-- 网络爬虫服务 -->
 		<module>bamboo-crawler</module>
-		<module>bamboo-runtime</module>
+		<module>bamboo-framework</module>
 		<module>bamboo-common</module>
 	</modules>
 	<packaging>pom</packaging>
@@ -24,7 +24,18 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
+	<properties>
+		<framework.version>0.0.1-SNAPSHOT</framework.version>
+		<common.version>0.0.1-SNAPSHOT</common.version>
+	</properties>
 
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 
 
 </project>
