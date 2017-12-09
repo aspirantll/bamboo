@@ -31,8 +31,19 @@ public class WebClientTest {
                 HtmlPage serHtmlPage = (HtmlPage) ser;
                 String text = serHtmlPage.asText();
                 System.out.println(text);
-
             }
+        }
+    }
+
+    @Test
+    public void xPathTest() throws IOException {
+        WebClient webClient = new WebClient(BrowserVersion.FIREFOX_52);
+        WebWindow webWindow = webClient.openWindow(new URL("https://www.miaobige.com/"),"baiDu");
+        Page page = webWindow.getEnclosedPage();
+        if(page.isHtmlPage()) {
+            HtmlPage htmlPage = (HtmlPage) page;
+            DomElement obj = htmlPage.getFirstByXPath("/html");
+            obj.click();
         }
     }
 }

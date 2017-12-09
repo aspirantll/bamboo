@@ -4,6 +4,7 @@ import com.alibaba.dubbo.config.ApplicationConfig;
 import com.alibaba.dubbo.config.ProtocolConfig;
 import com.alibaba.dubbo.config.RegistryConfig;
 import com.alibaba.dubbo.config.spring.AnnotationBean;
+import com.flushest.bamboo.common.Constant;
 import com.flushest.bamboo.framework.util.ConfigCoreUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
