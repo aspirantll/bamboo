@@ -1,5 +1,6 @@
 package com.flushest.bamboo.framework.persistence;
 
+import org.springframework.context.annotation.Conditional;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.DefaultTransactionStatus;
@@ -16,7 +17,12 @@ public class DataSourceTransactionManagerExtension extends DataSourceTransaction
     @Override
     public void afterPropertiesSet() {
         Collection<DataSource> dataSources = SqlSessionFactoryProxy.getDataSourceMap().values();
+        if(dataSources.isEmpty()) {
+            logger.info("没有配置数据源，不为事务管理器指定数据源...");
+            return;
+        }
         setDataSource(dataSources.iterator().next());
+        logger.info("事务管理器初始化完成...");
         super.afterPropertiesSet();
     }
 

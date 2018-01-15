@@ -5,18 +5,32 @@ import com.alibaba.dubbo.config.ProtocolConfig;
 import com.alibaba.dubbo.config.RegistryConfig;
 import com.alibaba.dubbo.config.spring.AnnotationBean;
 import com.flushest.bamboo.common.Constant;
+import com.flushest.bamboo.framework.config.Configurations;
 import com.flushest.bamboo.framework.util.ConfigCoreUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 
 /**
  * Created by Administrator on 2017/10/14 0014.
  */
 @Configuration
+@PropertySource(value = "classpath:dubbo.properties",ignoreResourceNotFound = false)
+@PropertySource(value = "classpath:bamboo.properties",ignoreResourceNotFound = true)
 public class ServiceCoreConfig {
     private static final Logger logger = LoggerFactory.getLogger(ServiceCoreConfig.class);
+
+    @Bean
+    public Configurations configurations() {
+        Configurations configurations = new Configurations();
+        ConfigCoreUtil.setConfigurationService(configurations);
+        return configurations;
+    }
+
     @Bean
     public ApplicationConfig applicationConfig() {
         ApplicationConfig applicationConfig = new ApplicationConfig();

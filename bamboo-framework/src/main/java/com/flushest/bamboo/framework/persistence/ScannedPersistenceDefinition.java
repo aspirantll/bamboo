@@ -8,8 +8,6 @@ import com.flushest.bamboo.framework.persistence.definitions.IdDefinition;
 import com.flushest.bamboo.framework.persistence.definitions.TableDefinition;
 import com.flushest.bamboo.common.framework.exception.BambooRuntimeException;
 import com.flushest.bamboo.framework.util.ClassUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.core.type.ClassMetadata;
@@ -27,7 +25,6 @@ import java.util.List;
  * Created by Administrator on 2017/10/22 0022.
  */
 public class ScannedPersistenceDefinition {
-    private static Logger  logger = LoggerFactory.getLogger(ScannedPersistenceDefinition.class);
 
     private static MetadataReaderFactory metadataReaderFactory = new SimpleMetadataReaderFactory();
 

@@ -1,6 +1,5 @@
-package com.flushest.bamboo.crawler.core.url;
+package com.flushest.bamboo.framework.resource;
 
-import com.flushest.bamboo.crawler.core.enums.Protocol;
 import com.flushest.bamboo.common.crawler.exception.IllegalUrlException;
 import com.flushest.bamboo.framework.util.Assert;
 import org.slf4j.Logger;
@@ -17,26 +16,12 @@ public class WebURL implements Serializable{
     private static final Logger logger = LoggerFactory.getLogger(WebURL.class);
 
     private URLParser urlParser;
-    private Protocol protocol;
-    private URL url;
+    private String protocol;
 
     public WebURL(String url) {
         Assert.notHasText(url,"url must be not null");
         this.urlParser = new URLParser(url);
-        this.protocol = Protocol.protocol(url);
-    }
-
-    private void init() {
-        try {
-            url = new URL(getUrl());
-        } catch (MalformedURLException e) {
-            logger.error("URL格式有误",e);
-            throw new IllegalUrlException(getUrl());
-        }
-    }
-
-    public URL createURL() {
-        return url;
+        this.protocol = urlParser.getProtocol();
     }
 
     public String getUrl() {
@@ -47,7 +32,12 @@ public class WebURL implements Serializable{
         return urlParser;
     }
 
-    public Protocol getProtocol() {
+    public String getProtocol() {
         return protocol;
+    }
+
+    @Override
+    public String toString() {
+        return getUrl();
     }
 }

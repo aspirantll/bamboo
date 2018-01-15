@@ -1,16 +1,21 @@
 package com.flushest.bamboo.crawler.core.fetcher;
 
+import com.flushest.bamboo.common.framework.exception.BambooRuntimeException;
 import com.flushest.bamboo.crawler.core.CrawlConfig;
-import com.flushest.bamboo.crawler.core.url.WebURL;
+import com.flushest.bamboo.framework.resource.WebURL;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebWindow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * Created by Administrator on 2017/11/12 0012.
  */
 public class WindowFetcher extends AbstractFetcher<WebWindow> {
-
     private WebClient webClient;
 
 
@@ -23,6 +28,12 @@ public class WindowFetcher extends AbstractFetcher<WebWindow> {
 
     @Override
     public WebWindow fetch(WebURL webURL) {
-        return webClient.openWindow(webURL.createURL(),webURL.getUrl());
+        URL url = null;
+        try {
+            url = new URL(webURL.getUrl());
+        } catch (MalformedURLException e) {
+            throw new BambooRuntimeException("failed to create URL for url:"+webURL,e);
+        }
+        return webClient.openWindow(url,webURL.getUrl());
     }
 }

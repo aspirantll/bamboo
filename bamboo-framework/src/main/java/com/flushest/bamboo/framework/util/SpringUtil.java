@@ -9,6 +9,11 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.ResolvableType;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 /**
  * Created by Administrator on 2017/10/14 0014.
  */
@@ -45,5 +50,16 @@ public class SpringUtil implements ApplicationContextAware {
             }
         }
         return null;
+    }
+
+    public static <T> List<T> getBeans(Class<T> beanClass) {
+        // 获取BeanFactory
+        GenericApplicationContext genericApplicationContext = (GenericApplicationContext) applicationContext;
+        ListableBeanFactory beanFactory = genericApplicationContext.getBeanFactory();
+        // 获取类型为beanClass的BeanName数组
+        String[] beanNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(beanFactory,beanClass);
+        return Stream.of(beanNames)
+                .map(beanName -> (T)getBean(beanName))
+                .collect(Collectors.toList());
     }
 }

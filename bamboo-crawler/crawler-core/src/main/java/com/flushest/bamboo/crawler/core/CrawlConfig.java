@@ -38,4 +38,8 @@ public class CrawlConfig {
     public void setPolitenessDelay(int politenessDelay) {
         this.politenessDelay = politenessDelay;
     }
+
+    public boolean validate() {
+        return true;
+    }
 }

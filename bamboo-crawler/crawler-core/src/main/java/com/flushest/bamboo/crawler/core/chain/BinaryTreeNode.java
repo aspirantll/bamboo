@@ -3,12 +3,12 @@ package com.flushest.bamboo.crawler.core.chain;
 /**
  * Created by Administrator on 2017/11/18 0018.
  */
-public class BinaryTree<T> {
+public class BinaryTreeNode<T> {
     private T current;
-    private BinaryTree<T> leftSubtree;
-    private BinaryTree<T> rightSubtree;
+    private BinaryTreeNode<T> leftSubtree;
+    private BinaryTreeNode<T> rightSubtree;
 
-    public BinaryTree(T current, BinaryTree<T> leftSubtree, BinaryTree<T> rightSubtree) {
+    public BinaryTreeNode(T current, BinaryTreeNode<T> leftSubtree, BinaryTreeNode<T> rightSubtree) {
         this.current = current;
         this.leftSubtree = leftSubtree;
         this.rightSubtree = rightSubtree;
@@ -18,11 +18,11 @@ public class BinaryTree<T> {
         return current;
     }
 
-    public BinaryTree<T> getLeftSubtree() {
+    public BinaryTreeNode<T> getLeftSubtree() {
         return leftSubtree;
     }
 
-    public BinaryTree<T> getRightSubtree() {
+    public BinaryTreeNode<T> getRightSubtree() {
         return rightSubtree;
     }
 

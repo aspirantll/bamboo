@@ -4,6 +4,7 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.flushest.bamboo.common.Constant;
 import com.flushest.bamboo.framework.persistence.definitions.TableDefinition;
 import com.flushest.bamboo.common.framework.exception.BambooRuntimeException;
+import com.flushest.bamboo.framework.resource.ResourceResolverUtil;
 import com.flushest.bamboo.framework.util.Assert;
 import com.flushest.bamboo.framework.util.ClassUtil;
 import com.flushest.bamboo.framework.util.StringUtil;
@@ -52,7 +53,6 @@ public  class DBConfig {
     }
 
     private Properties properties;
-    private ResourcePatternResolver resourcePatternResolver;
 
     private List<TableDefinition> tableDefinitions;
 
@@ -70,7 +70,7 @@ public  class DBConfig {
     }
 
     private void prepare() {
-        resourcePatternResolver = new PathMatchingResourcePatternResolver();
+
     }
 
     private void loadProperties() {
@@ -144,7 +144,7 @@ public  class DBConfig {
         tableDefinitions = new ArrayList<>();
 
         try {
-            Resource[] resources = resourcePatternResolver.getResources("classpath*:"+ClassUtil.convertClassNameToResourcePath(Constant.BASE_PACKAGE)+"/**/*.class");
+            Resource[] resources = ClassUtil.scanPackage(Constant.BASE_PACKAGE);
             for(Resource resource : resources) {
                 ScannedPersistenceDefinition scanner = new ScannedPersistenceDefinition(resource);
                 TableDefinition tableDefinition = scanner.scan();
@@ -161,7 +161,7 @@ public  class DBConfig {
 
     private void parseMapper() {
         try {
-            Resource[] resources = resourcePatternResolver.getResources("classpath*:configs/mappers/*.xml");
+            Resource[] resources = ResourceResolverUtil.getResource("classpath*:configs/mappers/*.xml");
             for(Configuration configuration : tablePrefixesAndConfigurationMap.values()) {
                 parseMapperForConfiguration(configuration,resources);
             }

@@ -48,34 +48,50 @@ public abstract class ElementSelector<T,P> {
     }
 
     public class SelectorParser {
+        private String originSelector;
         private String xPath;
         private Map<String,String> attrs;
+        private String cssSelector;
+        private String operateSelector;
 
         /**
          * @param selector for example, "/html/body/a[id=id,href=]"
          */
         private SelectorParser(String selector) {
-            Assert.notHasText(selector,"选择器不能为空...");
-            attrs = new HashMap<String, String>();
-            int splitPos = selector.indexOf('[');
-            if(splitPos>0) {
-                xPath = selector.substring(0,splitPos).trim();
-                int endPos = selector.indexOf(']');
-                if(endPos==-1) {
-                    endPos = selector.length();
-                }
-                String attrString = selector.substring(splitPos+1,endPos);
-                String[] attrPairArray = attrString.split(",");
-                for(String attrPair : attrPairArray) {
-                    String[] attrAndValue = attrPair.split("=");
-                    if(attrAndValue.length!=2) {
-                        throw new BambooBusinessException("选择器配置格式有误，请检查"+selector);
-                    }
-                    attrs.put(attrAndValue[0],attrAndValue[1]);
-                }
+            Assert.notHasText(selector, "选择器不能为空...");
+            selector = selector.trim();
+            originSelector = selector;
+
+            if(selector.startsWith("::")) {//操作选择器
+                operateSelector = selector.substring(2);
+            }else if(selector.charAt(0)!='/'&&!Character.isLetter(selector.charAt(0))) {//认为是cssSelector
+                cssSelector = selector;
             }else {
-                xPath = selector.trim();
+                attrs = new HashMap<String, String>();
+                int splitPos = selector.indexOf('[');
+                if(splitPos>0) {
+                    xPath = selector.substring(0,splitPos).trim();
+                    int endPos = selector.indexOf(']');
+                    if(endPos==-1) {
+                        endPos = selector.length();
+                    }
+                    String attrString = selector.substring(splitPos+1,endPos);
+                    String[] attrPairArray = attrString.split(",");
+                    for(String attrPair : attrPairArray) {
+                        String[] attrAndValue = attrPair.split("=");
+                        if(attrAndValue.length!=2) {
+                            throw new BambooBusinessException("选择器配置格式有误，请检查"+selector);
+                        }
+                        attrs.put(attrAndValue[0],attrAndValue[1]);
+                    }
+                }else {
+                    xPath = selector.trim();
+                }
             }
+        }
+
+        public String getCssSelector() {
+            return cssSelector;
         }
 
         public String getxPath() {
@@ -84,6 +100,15 @@ public abstract class ElementSelector<T,P> {
 
         public Map<String, String> getAttrs() {
             return attrs;
+        }
+
+        public String getOperateSelector() {
+            return operateSelector;
+        }
+
+        @Override
+        public String toString() {
+            return originSelector;
         }
     }
 

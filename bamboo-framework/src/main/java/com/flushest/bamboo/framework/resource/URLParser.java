@@ -1,4 +1,4 @@
-package com.flushest.bamboo.crawler.core.url;
+package com.flushest.bamboo.framework.resource;
 
 import com.flushest.bamboo.framework.util.Assert;
 import org.slf4j.Logger;
@@ -12,9 +12,9 @@ public class URLParser {
 
     private String url;
 
-    public static String getProtocol(String url) {
+    public String getProtocol() {
         Assert.notHasText(url,"url must be not null");
-        int protocolEndIndex = url.indexOf("://");
+        int protocolEndIndex = url.indexOf(":");
         Assert.judge(protocolEndIndex == -1,"can not find protocol from url:"+url);
         return url.substring(0,protocolEndIndex).toLowerCase();
     }

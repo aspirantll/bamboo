@@ -1,13 +1,11 @@
 package com.flushest.bamboo.framework.util;
 
-import com.flushest.bamboo.framework.config.Configuration;
+import com.flushest.bamboo.framework.config.Configurations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * Created by Administrator on 2017/10/14 0014.
  */
-@Component
 public class ConfigCoreUtil {
     /**
      * dubbo application config
@@ -22,30 +20,29 @@ public class ConfigCoreUtil {
     private static final String PROTOCOL_NAME = "dubbo.protocol.name";
     private static final String PROTOCOL_PORT = "dubbo.protocol.port";
 
-    private static Configuration configuration;
+    protected static Configurations configurations;
 
-    @Autowired
-    public void setConfigurationService(Configuration configuration) {
-        ConfigCoreUtil.configuration = configuration;
+    public static void setConfigurationService(Configurations configurations) {
+        ConfigCoreUtil.configurations = configurations;
     }
 
     public static String getApplicationName() {
-        return configuration.get(APPLICATION_NAME);
+        return configurations.get(APPLICATION_NAME);
     }
 
     public static String getApplicationOwner() {
-        return configuration.get(APPLICATION_OWNER);
+        return configurations.get(APPLICATION_OWNER);
     }
 
     public static String getProtocolName() {
-        return configuration.get(PROTOCOL_NAME);
+        return configurations.get(PROTOCOL_NAME);
     }
 
     public static int getProtocolPort() {
-        return configuration.get(PROTOCOL_PORT,Integer.class);
+        return configurations.get(PROTOCOL_PORT,Integer.class);
     }
 
     public static String getRegistryAddress() {
-        return configuration.get(REGISTRY_ADDRESS);
+        return configurations.get(REGISTRY_ADDRESS);
     }
 }

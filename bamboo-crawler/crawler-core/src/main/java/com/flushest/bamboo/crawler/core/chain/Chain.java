@@ -7,19 +7,19 @@ import com.flushest.bamboo.common.crawler.exception.ResetChainException;
  * Created by Administrator on 2017/11/16 0016.
  */
 public class Chain<T> {
-    private BinaryTree<T> wholeTree;
-    private BinaryTree<T> currentNode;
+    private BinaryTreeNode<T> wholeTree;
+    private BinaryTreeNode<T> currentNode;
 
     public Chain() {
 
     }
 
-    public Chain(BinaryTree<T> wholeTree) {
+    public Chain(BinaryTreeNode<T> wholeTree) {
         this.wholeTree = wholeTree;
         reset();
     }
 
-    public void setWholeTree(BinaryTree<T> wholeTree) {
+    public void setWholeTree(BinaryTreeNode<T> wholeTree) {
         this.wholeTree = wholeTree;
         reset();
     }
@@ -47,7 +47,7 @@ public class Chain<T> {
      * @return
      */
     public T next(boolean isLeftSubtree) {
-        BinaryTree<T> next = isLeftSubtree?currentNode.getLeftSubtree():currentNode.getRightSubtree();
+        BinaryTreeNode<T> next = isLeftSubtree?currentNode.getLeftSubtree():currentNode.getRightSubtree();
         if(next==null) {
             throw new ChainNodeNotFoundException();
         }
