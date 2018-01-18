@@ -1,4 +1,4 @@
-package com.flushest.bamboo.crawler.core;
+package com.flushest.bamboo.crawler.core.context;
 
 import com.flushest.bamboo.common.framework.exception.BambooRuntimeException;
 import com.flushest.bamboo.crawler.core.process.ElementSelector;
@@ -11,31 +11,21 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Created by Administrator on 2017/12/11 0011.
+ * Created by Administrator on 2018/1/17 0017.
  */
-public class Context {
+public class StaticContext {
     private Page page;
-    private Map<String,String> fieldMap;
     private Element currentElement;
 
 
-    public Context(Page page) {
+    public StaticContext(Page page) {
         Assert.notNull(page,"page must be not null");
         this.page = page;
-        fieldMap = new HashMap<>();
         currentElement = page.getDocument();
     }
 
     public Page getPage() {
         return page;
-    }
-
-    public Map<String, String> getFieldMap() {
-        return fieldMap;
-    }
-
-    public String setField(String fieldName,String fieldValue) {
-        return fieldMap.put(fieldName,fieldValue);
     }
 
     public Element getCurrentElement() {

@@ -1,7 +1,8 @@
 package com.flushest.bamboo.crawler.core.process;
 
-import com.flushest.bamboo.crawler.core.Context;
-import com.flushest.bamboo.crawler.core.Page;
+import com.flushest.bamboo.crawler.core.ThreadLocalManager;
+import com.flushest.bamboo.crawler.core.context.CrawContext;
+import com.flushest.bamboo.crawler.core.context.StaticContext;
 import com.flushest.bamboo.framework.util.Assert;
 import org.jsoup.nodes.Element;
 
@@ -17,9 +18,9 @@ public class TextProcedure extends StaticProcedure {
     }
 
     @Override
-    public boolean process(Context context) {
-        Element element = getElement(context);
-        context.setField(fieldName,element.text());
+    public boolean process(StaticContext staticContext) {
+        Element element = getElement(staticContext);
+        ThreadLocalManager.contextThreadLocalManager.get().put(fieldName, element.text());
         return true;
     }
 }

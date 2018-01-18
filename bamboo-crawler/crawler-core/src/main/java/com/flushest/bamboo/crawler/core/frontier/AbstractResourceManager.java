@@ -1,7 +1,8 @@
 package com.flushest.bamboo.crawler.core.frontier;
 
-import com.flushest.bamboo.crawler.core.storage.QueueStorage;
+import com.flushest.bamboo.crawler.core.storage.Storage;
 import com.flushest.bamboo.framework.extension.ExtensionLoader;
+import com.flushest.bamboo.framework.util.ClassUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,19 +12,19 @@ import java.util.Map;
  */
 public abstract class AbstractResourceManager<T> implements ResourceManager<T> {
 
-    protected Map<String, QueueStorage<T>> queueMap;
+    protected Map<String, Storage<T>> queueMap;
 
     public AbstractResourceManager() {
         queueMap = new HashMap<>();
     }
 
-    protected QueueStorage<T> getQueueStorage(String key) {
-        QueueStorage<T> queue = queueMap.get(key);
+    protected Storage<T> getQueueStorage(String key) {
+        Storage<T> queue = queueMap.get(key);
         if(queue == null) {
             synchronized (this) {
                 if (queue == null) {
-                    ExtensionLoader<QueueStorage> extensionLoader = ExtensionLoader.getExtensionLoader(QueueStorage.class);
-                    queue = extensionLoader.getExtension("*");
+                    ExtensionLoader<Storage> extensionLoader = ExtensionLoader.getExtensionLoader(Storage.class);
+                    queue = extensionLoader.getExtension(ClassUtil.getGenericClass(this, AbstractResourceManager.class, 0).getName());
                     queueMap.put(key, queue);
                 }
             }
@@ -33,13 +34,13 @@ public abstract class AbstractResourceManager<T> implements ResourceManager<T> {
 
     @Override
     public T accept(String key) throws InterruptedException {
-        QueueStorage<T> queue = getQueueStorage(key);
+        Storage<T> queue = getQueueStorage(key);
         return queue.get();
     }
 
     @Override
     public boolean offer(String key, T t) {
-        QueueStorage<T> queue = getQueueStorage(key);
+        Storage<T> queue = getQueueStorage(key);
         return queue.put(t);
     }
 

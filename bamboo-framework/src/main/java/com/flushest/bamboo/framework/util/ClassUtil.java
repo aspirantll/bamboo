@@ -39,6 +39,10 @@ public class ClassUtil extends ClassUtils{
         return (Class<T>) types[index].resolve();
     }
 
+    public static <T> Class<T> getGenericClass(Object obj, Class superClass, int index) {
+        return getGenericClass(obj.getClass(), superClass, index);
+    }
+
     /**
      * 获取泛型数组
      * @param clazz

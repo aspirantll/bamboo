@@ -2,6 +2,7 @@ package com.flushest.bamboo.crawler.core.frontier;
 
 import com.flushest.bamboo.common.framework.exception.BambooRuntimeException;
 import com.flushest.bamboo.framework.util.ClassUtil;
+import com.flushest.bamboo.framework.util.PriorityComparator;
 import org.springframework.core.io.Resource;
 import org.springframework.core.type.ClassMetadata;
 import org.springframework.core.type.classreading.MetadataReader;
@@ -56,7 +57,10 @@ public class ResourceManagerFactory {
                                 Class<?> clazz = ClassUtil.forName(classMetadata.getClassName(),ResourceManagerFactory.class.getClassLoader());
                                 if(ResourceManager.class.isAssignableFrom(clazz)) {
                                     Class<?> genericClass = ClassUtil.getGenericClass(clazz, ResourceManager.class, 0);
-                                    cachedClasses.put(genericClass, clazz);
+                                    Class<?> existClass = cachedClasses.get(genericClass);
+                                    if(existClass == null || PriorityComparator.priorThan(clazz, existClass)) {
+                                        cachedClasses.put(genericClass, clazz);
+                                    }
                                 }
                             }
                         }

@@ -6,7 +6,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 /**
  * Created by Administrator on 2018/1/10 0010.
  */
-public class BlockingQueueStorage<T> implements QueueStorage<T> {
+public class BlockingStorage<T> implements Storage<T> {
     private final BlockingQueue<T> queue = new LinkedBlockingQueue<T>();
 
 

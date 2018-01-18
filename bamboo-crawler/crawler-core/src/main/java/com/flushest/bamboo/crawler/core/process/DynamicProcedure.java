@@ -42,6 +42,10 @@ public abstract class DynamicProcedure implements Procedure<WebWindow> {
         return elementSelector.getElement(page);
     }
 
+    protected List<DomElement> getElements(HtmlPage page) {
+        return elementSelector.getElements(page);
+    }
+
     private class DynamicElementSelector extends ElementSelector<DomElement,HtmlPage> {
 
         public DynamicElementSelector(String selector) {

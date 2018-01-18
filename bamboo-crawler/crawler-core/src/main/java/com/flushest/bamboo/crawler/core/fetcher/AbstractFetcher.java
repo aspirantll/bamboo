@@ -1,6 +1,6 @@
 package com.flushest.bamboo.crawler.core.fetcher;
 
-import com.flushest.bamboo.crawler.core.CrawlConfig;
+import com.flushest.bamboo.crawler.core.context.CrawlConfig;
 
 /**
  * Created by Administrator on 2017/11/16 0016.

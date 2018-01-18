@@ -1,1 +1,3 @@
-*=com.flushest.bamboo.crawler.core.storage.BlockingQueueStorage
+com.flushest.bamboo.crawler.core.context.Page=com.flushest.bamboo.crawler.core.storage.BlockingStorage
+com.flushest.bamboo.framework.resource.WebURL=com.flushest.bamboo.crawler.core.storage.BlockingStorage
+com.flushest.bamboo.crawler.core.context.TextFile=com.flushest.bamboo.crawler.core.storage.FileStorage

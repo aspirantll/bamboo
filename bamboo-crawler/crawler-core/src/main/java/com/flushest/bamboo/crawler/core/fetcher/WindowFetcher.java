@@ -1,13 +1,11 @@
 package com.flushest.bamboo.crawler.core.fetcher;
 
 import com.flushest.bamboo.common.framework.exception.BambooRuntimeException;
-import com.flushest.bamboo.crawler.core.CrawlConfig;
+import com.flushest.bamboo.crawler.core.context.CrawlConfig;
 import com.flushest.bamboo.framework.resource.WebURL;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebWindow;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
 import java.net.URL;

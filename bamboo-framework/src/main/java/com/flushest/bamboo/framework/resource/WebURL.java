@@ -1,13 +1,10 @@
 package com.flushest.bamboo.framework.resource;
 
-import com.flushest.bamboo.common.crawler.exception.IllegalUrlException;
 import com.flushest.bamboo.framework.util.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 /**
  * Created by Administrator on 2017/11/12 0012.

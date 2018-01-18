@@ -4,6 +4,7 @@ import com.flushest.bamboo.common.framework.exception.BambooRuntimeException;
 import com.flushest.bamboo.framework.annotation.SPI;
 import com.flushest.bamboo.framework.util.Assert;
 import com.flushest.bamboo.framework.util.ClassUtil;
+import com.flushest.bamboo.framework.util.PriorityComparator;
 import com.flushest.bamboo.framework.util.PropertiesUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,7 +116,10 @@ public class ExtensionLoader<T> {
                     if(!type.isAssignableFrom(clazz)) {
                         throw new BambooRuntimeException(String.format("the class[%s] must implement the interface[%s]", clazz.getName(), type.getName()));
                     }
-                    cachedClasses.put(key, clazz);
+                    Class existClass = cachedClasses.get(key);
+                    if(existClass == null || PriorityComparator.priorThan(clazz, existClass)) {
+                        cachedClasses.put(key, clazz);
+                    }
                 } catch (ClassNotFoundException e) {
                     throw new BambooRuntimeException(String.format("cannot found class[%s]", value),e);
                 }
