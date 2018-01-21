@@ -7,9 +7,8 @@ public class BambooBusinessException extends RuntimeException {
 
     private String errorCode;//错误码
 
-    public BambooBusinessException(String errorCode) {
-        super();
-        this.errorCode = errorCode;
+    public BambooBusinessException(String msg) {
+        super(msg);
     }
 
     public BambooBusinessException(String errorCode,String msg) {

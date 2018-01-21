@@ -2,6 +2,7 @@ package com.flushest.bamboo.crawler.core.process;
 
 import com.flushest.bamboo.crawler.core.ThreadLocalManager;
 import com.flushest.bamboo.crawler.core.chain.Task;
+import com.flushest.bamboo.crawler.core.constant.FieldName;
 import com.flushest.bamboo.crawler.core.context.CrawlConfig;
 import com.flushest.bamboo.crawler.core.context.StaticContext;
 import com.flushest.bamboo.crawler.core.context.TextFile;
@@ -18,7 +19,7 @@ public class SinkFileProduce extends StaticProcedure {
 
     private ResourceManager<TextFile> textFileResourceManager;
 
-    protected SinkFileProduce() {
+    public SinkFileProduce() {
         textFileResourceManager = ResourceManagerFactory.getResourceManager(TextFile.class);
     }
 
@@ -27,9 +28,13 @@ public class SinkFileProduce extends StaticProcedure {
         Task task = ThreadLocalManager.contextThreadLocalManager.get().getTask();
         CrawlConfig config = ThreadLocalManager.contextThreadLocalManager.get().getConfig();
 
-        Map<String,String> map = item.getFieldMap();
+        Map<String,Object> map = ThreadLocalManager.contextThreadLocalManager.get().getContextMap();
+        String fileName = (String) map.get(FieldName.FILE_NAME);
+        if(fileName.contains("${timestamp}")) {
+            fileName.replaceAll("\\$\\{timestamp\\}", "" + task.getStartTime());
+        }
         return textFileResourceManager.offer(task.getTaskId(), TextFile.builder()
-                .fileName(config.getDirectory()+ File.separator + task.getTaskId() +File.separator + map.get("fileName"))
-                .content(map.get("content")).build());
+                .fileName(config.getDirectory()+ File.separator + task.getTaskId() +File.separator + fileName)
+                .content((String)map.get(FieldName.CONTENT)).build());
     }
 }

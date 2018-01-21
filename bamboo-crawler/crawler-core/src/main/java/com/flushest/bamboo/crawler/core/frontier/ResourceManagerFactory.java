@@ -8,6 +8,7 @@ import org.springframework.core.type.ClassMetadata;
 import org.springframework.core.type.classreading.MetadataReader;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -33,6 +34,7 @@ public class ResourceManagerFactory {
     }
 
     private static ResourceManager createResourceManager(Class<?> clazz) {
+        loadClasses();
         Class<?> type = cachedClasses.get(clazz);
         if(type == null) {
             throw new BambooRuntimeException(String.format("unsupported genericClass[%s]", clazz.getName()));
@@ -48,6 +50,7 @@ public class ResourceManagerFactory {
         if(cachedClasses == null) {
             synchronized (ResourceManagerFactory.class) {
                 if(cachedClasses == null) {
+                    cachedClasses = new HashMap<>();
                     try {
                         Resource[] resources = ClassUtil.scanPackage(scanPackage);
                         for(Resource resource : resources) {

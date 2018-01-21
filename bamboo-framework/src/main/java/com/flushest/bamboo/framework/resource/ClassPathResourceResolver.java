@@ -9,7 +9,6 @@ import java.io.IOException;
 /**
  * Created by Administrator on 2018/1/15 0015.
  */
-@Component
 public class ClassPathResourceResolver implements ResourceResolver<Resource[]> {
     private PathMatchingResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
 

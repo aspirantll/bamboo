@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Created by Administrator on 2017/12/9 0009.
@@ -18,9 +20,8 @@ import java.util.Map;
  */
 public class CrawlController {
 
-    private static final Logger logger = LoggerFactory.getLogger(CrawlController.class);
+    protected ConcurrentMap<String, Task> tasks = new ConcurrentHashMap<>();
 
-    protected Map<String, Task> tasks = new HashMap<>();
 
 
 
@@ -30,7 +31,7 @@ public class CrawlController {
 
     public void addTask(Task task) {
         Assert.notNull(task, "task must be not null");
-        tasks.put(task.getTaskId(), task);
+        tasks.putIfAbsent(task.getTaskId(), task);
     }
 
     public void start(Task task) {

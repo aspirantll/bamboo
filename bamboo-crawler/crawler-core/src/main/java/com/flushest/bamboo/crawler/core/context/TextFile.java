@@ -20,6 +20,9 @@ public class TextFile {
         File file = new File(fileName);
         if(!file.exists()) {
             try {
+                if(!file.getParentFile().exists()) {
+                    file.getParentFile().mkdirs();
+                }
                 file.createNewFile();
             } catch (IOException e) {
                 throw new BambooRuntimeException(String.format("创建文件%s失败", fileName), e);

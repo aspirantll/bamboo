@@ -9,6 +9,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.nio.charset.Charset;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Administrator on 2018/1/17 0017.
@@ -17,6 +18,11 @@ import java.nio.charset.Charset;
 public class FileStorage implements Storage<TextFile> {
     @Override
     public TextFile get() throws InterruptedException {
+        throw new UnsupportedOperationException("unsupported method : get()");
+    }
+
+    @Override
+    public TextFile get(long timeout, TimeUnit unit) throws InterruptedException {
         throw new UnsupportedOperationException("unsupported method : get()");
     }
 
@@ -34,6 +40,7 @@ public class FileStorage implements Storage<TextFile> {
                 buffer.flip();
                 channel.write(buffer);
                 buffer.clear();
+                lock.release();
                 channel.close();
             }
         } catch (IOException e) {

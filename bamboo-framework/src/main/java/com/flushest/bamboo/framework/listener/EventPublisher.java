@@ -6,16 +6,16 @@ import java.util.List;
 /**
  * Created by Administrator on 2018/1/18 0018.
  */
-public interface EventSource {
+public interface EventPublisher {
     List<Listener> listeners = new ArrayList<>();
 
     default void register(Listener listener) {
         listeners.add(listener);
     }
 
-    default void notifyChanges(Event event) {
+    default void publish(Event event) {
         listeners.forEach(listener -> {
-            listener.notifyChange(event);
+            listener.onEvent(event);
         });
     }
 }

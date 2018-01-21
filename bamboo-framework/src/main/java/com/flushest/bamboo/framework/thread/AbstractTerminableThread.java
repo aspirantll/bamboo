@@ -1,9 +1,12 @@
 package com.flushest.bamboo.framework.thread;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Created by Administrator on 2018/1/15 0015.
  * 可终止抽象模板线程
  */
+@Slf4j
 public abstract class AbstractTerminableThread extends Thread implements Terminable {
     public TerminationToken terminationToken;
 
@@ -29,6 +32,7 @@ public abstract class AbstractTerminableThread extends Thread implements Termina
      */
     protected void doCleanup(Exception cause) {
         //什么也不做
+
     }
 
     /**

@@ -2,7 +2,7 @@ package com.flushest.bamboo.framework;
 
 import com.flushest.bamboo.framework.dao.AnotherDao;
 import com.flushest.bamboo.framework.dao.UserDao;
-import com.flushest.bamboo.framework.initcfg.StartUpConfig;
+import com.flushest.bamboo.framework.initcfg.StartUpCoreConfig;
 import com.flushest.bamboo.framework.model.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,7 +15,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
  * Created by Administrator on 2017/10/28 0028.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {StartUpConfig.class})
+@ContextConfiguration(classes = {StartUpCoreConfig.class})
 @WebAppConfiguration
 public class DBTest {
 

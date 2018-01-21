@@ -1,6 +1,8 @@
 package com.flushest.bamboo.crawler.core.fetcher;
 
 import com.flushest.bamboo.common.framework.exception.BambooRuntimeException;
+import com.flushest.bamboo.crawler.core.ThreadLocalManager;
+import com.flushest.bamboo.crawler.core.constant.FieldName;
 import com.flushest.bamboo.crawler.core.context.CrawlConfig;
 import com.flushest.bamboo.framework.resource.WebURL;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
@@ -15,11 +17,43 @@ import java.net.URL;
  */
 public class WindowFetcher extends AbstractFetcher<WebWindow> {
     private WebClient webClient;
+    private Long createTime;
 
 
     public WindowFetcher(CrawlConfig crawlConfig) {
         super(crawlConfig);
-        webClient = new WebClient(BrowserVersion.FIREFOX_52,crawlConfig.getProxyHost(),crawlConfig.getProxyPort());
+        doRefresh();
+    }
+
+    private void doRefresh() {
+        CrawlConfig crawlConfig = getConfig();
+        if(crawlConfig.getProxyHost()!=null && crawlConfig.getProxyPort()!=null) {
+            webClient = new WebClient(BrowserVersion.FIREFOX_52,crawlConfig.getProxyHost(),crawlConfig.getProxyPort());
+        }else {
+            webClient = new WebClient(BrowserVersion.FIREFOX_52);
+        }
+
+        webClient.getOptions().setJavaScriptEnabled(crawlConfig.isLoadJsEngine());
+        webClient.getOptions().setCssEnabled(crawlConfig.isLoadCssEngine());
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+        createTime = System.currentTimeMillis();
+    }
+
+    public WebWindow refresh() {
+        Long interval = getConfig().getClientInterval();
+        if(interval != null && System.currentTimeMillis()-createTime >= interval) {
+            close();
+            doRefresh();
+            String url = (String) ThreadLocalManager.contextThreadLocalManager.get().get(FieldName.CURRENT_URL);
+            return fetch(new WebURL(url));
+        }
+        return webClient.getCurrentWindow();
+    }
+
+    public void close() {
+        webClient.getCurrentWindow().getJobManager().removeAllJobs();
+        webClient.close();
+        System.gc();
     }
 
 

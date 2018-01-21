@@ -15,7 +15,7 @@ public class SinkHtmlProcedure extends DynamicProcedure {
 
     private String taskId;
 
-    protected SinkHtmlProcedure(String selector, String taskId) {
+    public SinkHtmlProcedure(String selector, String taskId) {
         super(selector, ElementSelector.StrictLevel.NONE);
         this.taskId = taskId;
     }

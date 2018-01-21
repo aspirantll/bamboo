@@ -5,18 +5,19 @@ import com.flushest.bamboo.crawler.core.context.CrawContext;
 import com.flushest.bamboo.crawler.core.context.CrawlConfig;
 import com.flushest.bamboo.crawler.core.chain.Chain;
 import com.flushest.bamboo.crawler.core.chain.Task;
+import com.flushest.bamboo.crawler.core.context.DynamicContext;
 import com.flushest.bamboo.crawler.core.fetcher.WindowFetcher;
 import com.flushest.bamboo.crawler.core.frontier.ResourceManager;
 import com.flushest.bamboo.crawler.core.frontier.ResourceManagerFactory;
 import com.flushest.bamboo.crawler.core.process.Procedure;
+import com.flushest.bamboo.framework.listener.EventPublisher;
 import com.flushest.bamboo.framework.resource.WebURL;
 import com.flushest.bamboo.framework.thread.AbstractTerminableThread;
-import com.gargoylesoftware.htmlunit.WebWindow;
 
 /**
  * Created by Administrator on 2018/1/11 0011.
  */
-public class DynamicWorker extends AbstractTerminableThread{
+public class DynamicWorker extends AbstractTerminableThread implements EventPublisher {
 
     private ResourceManager<WebURL> resourceManager;
 
@@ -32,25 +33,46 @@ public class DynamicWorker extends AbstractTerminableThread{
     }
 
     @Override
-    protected void doRun() throws Exception {
-        ThreadLocalManager.contextThreadLocalManager.set(new CrawContext(windowFetcher.getConfig(), task));;
+    public void doRun() throws Exception {
+        ThreadLocalManager.contextThreadLocalManager.set(new CrawContext(windowFetcher.getConfig(), task));
 
-        WebURL url = resourceManager.accept(task.getTaskId());
-        WebWindow webWindow = windowFetcher.fetch(url);
-        boolean isLeft;
+        WebURL url = getUrl();
 
-        Chain<Procedure> dynamicProcedureChain = task.getDynamicChain();
-        do{
-            Procedure<WebWindow> procedure = dynamicProcedureChain.current();
-            isLeft = procedure.process(webWindow);
-        }while (dynamicProcedureChain.hasMore(isLeft));
+        if (url == null) {
+            this.terminate();
+            return;
+        }
 
-        ThreadLocalManager.contextThreadLocalManager.clear();
+        DynamicContext dynamicContext = new DynamicContext(windowFetcher.fetch(url));
+        try {
+            boolean isLeft;
+
+            Chain<Procedure> dynamicProcedureChain = task.getDynamicChain();
+            dynamicProcedureChain.reset();
+            do{
+                Procedure<DynamicContext> procedure = dynamicProcedureChain.current();
+                isLeft = procedure.process(dynamicContext);
+                dynamicContext.setWebWindow(windowFetcher.refresh());
+            }while (dynamicProcedureChain.hasMore(isLeft) && dynamicProcedureChain.next(isLeft)!=null);
+        }finally {
+            ThreadLocalManager.contextThreadLocalManager.clear();
+        }
+
+
+    }
+
+    private WebURL getUrl() throws InterruptedException {
+        CrawlConfig config = task.getCrawlConfig();
+        if(config.getMaxWaitTime() != null) {
+            return resourceManager.accept(task.getTaskId(), config.getMaxWaitTime(), config.getWaitTimeUnit());
+        }else {
+            return resourceManager.accept(task.getTaskId());
+        }
     }
 
     @Override
     protected void doCleanup(Exception cause) {
-        task.finishedCount(0);
+        windowFetcher.close();
     }
 
 }

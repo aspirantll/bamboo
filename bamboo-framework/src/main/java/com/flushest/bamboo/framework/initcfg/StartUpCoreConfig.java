@@ -6,23 +6,37 @@ import com.alibaba.dubbo.config.RegistryConfig;
 import com.alibaba.dubbo.config.spring.AnnotationBean;
 import com.flushest.bamboo.common.Constant;
 import com.flushest.bamboo.framework.config.Configurations;
+import com.flushest.bamboo.framework.resource.ClassPathResourceResolver;
 import com.flushest.bamboo.framework.util.ConfigCoreUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
+
+import java.util.Arrays;
 
 /**
- * Created by Administrator on 2017/10/14 0014.
+ * Created by Administrator on 2017/9/28 0028.
+ * 启动
  */
-@Configuration
+@SpringBootApplication(scanBasePackages = {"com.flushest.bamboo"},exclude = {DataSourceAutoConfiguration.class})
 @PropertySource(value = "classpath:dubbo.properties",ignoreResourceNotFound = false)
 @PropertySource(value = "classpath:bamboo.properties",ignoreResourceNotFound = true)
-public class ServiceCoreConfig {
-    private static final Logger logger = LoggerFactory.getLogger(ServiceCoreConfig.class);
+@Slf4j
+public class StartUpCoreConfig {
+
+    public static void main(String[] args) throws Exception {
+        log.info("starting application ...");
+        log.info(String.format("command line args:%s", Arrays.toString(args)));
+        SpringApplication.run(StartUpCoreConfig.class,args);
+    }
+
+    @Bean
+    public ClassPathResourceResolver classPathResourceResolver() {
+        return new ClassPathResourceResolver();
+    }
 
     @Bean
     public Configurations configurations() {
@@ -69,5 +83,4 @@ public class ServiceCoreConfig {
 
         return annotationBean;
     }
-
 }

@@ -1,11 +1,13 @@
 package com.flushest.bamboo.framework.persistence;
 
 import com.flushest.bamboo.common.framework.exception.BambooRuntimeException;
+import com.flushest.bamboo.framework.resource.ClassPathResourceResolver;
 import net.sf.jsqlparser.JSQLParserException;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
 import java.sql.SQLException;
@@ -15,6 +17,7 @@ import java.util.List;
  * Created by Administrator on 2017/10/29 0029.
  */
 @Component
+@DependsOn("classPathResourceResolver")
 public class DBSession {
     private static final Logger logger = LoggerFactory.getLogger(DBSession.class);
 

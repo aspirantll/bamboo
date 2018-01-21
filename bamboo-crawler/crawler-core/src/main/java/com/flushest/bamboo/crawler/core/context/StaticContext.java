@@ -16,11 +16,13 @@ import java.util.stream.Collectors;
 public class StaticContext {
     private Page page;
     private Element currentElement;
+    private boolean isIterable;
 
 
-    public StaticContext(Page page) {
+    public StaticContext(Page page, boolean isIterable) {
         Assert.notNull(page,"page must be not null");
         this.page = page;
+        this.isIterable = isIterable;
         currentElement = page.getDocument();
     }
 
@@ -36,6 +38,7 @@ public class StaticContext {
         String operateSelector = selectorParser.getOperateSelector();
         String cssSelector = selectorParser.getCssSelector();
 
+        Element nextElement;
         if(StringUtil.hasText(operateSelector)) {
             String method;
             String[] args;
@@ -51,7 +54,7 @@ public class StaticContext {
 
             switch(method) {
                 case "parent":
-                    currentElement = currentElement.parent();
+                    nextElement = currentElement.parent();
                     break;
                 case "child":
                     if(args.length!=1) {
@@ -59,28 +62,28 @@ public class StaticContext {
                     }
                     try {
                         int index = Integer.parseInt(args[0]);
-                        currentElement = currentElement.child(index);
+                        nextElement = currentElement.child(index);
                     }catch (NumberFormatException e) {
                         throw new BambooRuntimeException("非法方法调用:"+operateSelector);
                     }
                     break;
                 case "firstElementSibling":
-                    currentElement = currentElement.firstElementSibling();
+                    nextElement = currentElement.firstElementSibling();
                     break;
                 case "previousElementSibling":
-                    currentElement = currentElement.previousElementSibling();
+                    nextElement = currentElement.previousElementSibling();
                     break;
                 case "nextElementSibling":
-                    currentElement = currentElement.nextElementSibling();
+                    nextElement = currentElement.nextElementSibling();
                     break;
                 case "resetCurrentElement":
-                    currentElement = resetCurrentElement();
+                    nextElement = resetCurrentElement();
                     break;
                 default:
                     throw new BambooRuntimeException("暂不支持的方法调用:" + operateSelector);
             }
         }else if(StringUtil.hasText(cssSelector)) {
-            currentElement = currentElement.select(cssSelector).first();
+            nextElement = currentElement.select(cssSelector).first();
         }else {
             //初始化元素List
             List<Element> elementList = new ArrayList();
@@ -140,13 +143,20 @@ public class StaticContext {
             if(elementList.isEmpty()) {
                 throw new BambooRuntimeException("未找到符合条件的元素：" + selectorParser);
             }
-            currentElement = elementList.get(0);
+            nextElement = elementList.get(0);
         }
-        return getCurrentElement();
+        return iterate(nextElement);
     }
 
     public Element resetCurrentElement() {
         currentElement = page.getDocument();
         return getCurrentElement();
+    }
+
+    private Element iterate(Element next) {
+        if(isIterable) {
+            currentElement = next;
+        }
+        return next;
     }
 }

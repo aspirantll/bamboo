@@ -64,12 +64,12 @@ public abstract class ElementSelector<T,P> {
 
             if(selector.startsWith("::")) {//操作选择器
                 operateSelector = selector.substring(2);
-            }else if(selector.charAt(0)!='/'&&!Character.isLetter(selector.charAt(0))) {//认为是cssSelector
+            }else if(selector.charAt(0)!='/'&&selector.charAt(0)!='['&&!Character.isLetter(selector.charAt(0))) {//认为是cssSelector
                 cssSelector = selector;
             }else {
                 attrs = new HashMap<String, String>();
                 int splitPos = selector.indexOf('[');
-                if(splitPos>0) {
+                if(splitPos>=0) {
                     xPath = selector.substring(0,splitPos).trim();
                     int endPos = selector.indexOf(']');
                     if(endPos==-1) {

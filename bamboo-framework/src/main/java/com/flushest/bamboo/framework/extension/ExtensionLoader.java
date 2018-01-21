@@ -23,7 +23,7 @@ public class ExtensionLoader<T> {
 
     private static ConcurrentMap<Class, ExtensionLoader> cachedExtensionLoaders = new ConcurrentHashMap<>();
 
-    private String BAMBOO_DIRECTORY = "/META-INF/bamboo/";
+    private String BAMBOO_DIRECTORY = "META-INF/bamboo/";
 
     private Class<?> type;
 

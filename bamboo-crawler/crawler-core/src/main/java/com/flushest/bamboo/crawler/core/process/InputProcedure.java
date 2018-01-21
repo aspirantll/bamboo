@@ -10,7 +10,7 @@ public class InputProcedure extends DynamicProcedure {
 
     private String inputValue;
 
-    protected InputProcedure(String selector, String inputValue) {
+    public InputProcedure(String selector, String inputValue) {
         super(selector, ElementSelector.StrictLevel.UNIQUE);
         this.inputValue = inputValue;
     }

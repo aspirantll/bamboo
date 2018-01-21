@@ -1,6 +1,7 @@
 package com.flushest.bamboo.crawler.core.process;
 
 import com.flushest.bamboo.common.crawler.exception.UnsupportedPageTypeException;
+import com.flushest.bamboo.crawler.core.context.DynamicContext;
 import com.flushest.bamboo.framework.util.StringUtil;
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebWindow;
@@ -16,7 +17,7 @@ import java.util.stream.Collectors;
 /**
  * Created by Administrator on 2017/11/19 0019.
  */
-public abstract class DynamicProcedure implements Procedure<WebWindow> {
+public abstract class DynamicProcedure implements Procedure<DynamicContext> {
 
     protected String selector;
     private DynamicElementSelector elementSelector;
@@ -29,8 +30,8 @@ public abstract class DynamicProcedure implements Procedure<WebWindow> {
     protected abstract boolean execute(HtmlPage page);
 
     @Override
-    public boolean process(WebWindow window) {
-        Page page = window.getEnclosedPage();
+    public boolean process(DynamicContext context) {
+        Page page = context.getWebWindow().getEnclosedPage();
         if(page.isHtmlPage()) {
             return execute((HtmlPage) page);
         }else {
@@ -77,14 +78,21 @@ public abstract class DynamicProcedure implements Procedure<WebWindow> {
             }
 
             return elements.stream().filter((element)->{
+                String textKey = "text";
                 for(Map.Entry<String,String> entry : attr.entrySet()) {
                     String attrName = entry.getKey();
                     String attrValue = entry.getValue();
 
-                    if(element.hasAttribute(attrName)&&attrValue.equals(element.getAttribute(attrName))) {
-                        continue;
+                    if(attrName.equals(textKey)) {
+                        if(attrValue == null || !attrValue.equals(element.asText())) {
+                            return false;
+                        }
                     }else {
-                        return false;
+                        if(element.hasAttribute(attrName)&&attrValue.equals(element.getAttribute(attrName))) {
+                            continue;
+                        }else {
+                            return false;
+                        }
                     }
                 }
                 return true;
