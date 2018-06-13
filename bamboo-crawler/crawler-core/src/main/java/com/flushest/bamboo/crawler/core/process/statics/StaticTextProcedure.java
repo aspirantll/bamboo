@@ -1,10 +1,12 @@
-package com.flushest.bamboo.crawler.core.process;
+package com.flushest.bamboo.crawler.core.process.statics;
 
 import com.flushest.bamboo.common.framework.exception.BambooRuntimeException;
 import com.flushest.bamboo.crawler.core.ThreadLocalManager;
 import com.flushest.bamboo.crawler.core.context.CrawContext;
 import com.flushest.bamboo.crawler.core.context.StaticContext;
 import com.flushest.bamboo.framework.util.Assert;
+import com.flushest.bamboo.framework.util.StringUtil;
+import lombok.Setter;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -15,21 +17,19 @@ import org.jsoup.safety.Whitelist;
  */
 public class StaticTextProcedure extends StaticProcedure {
     private static final String separator = "\n";
-
+    @Setter
     private String fieldName;
+    @Setter
     private boolean isAppend;
+    @Setter
     private String value;
 
-    public StaticTextProcedure(String fieldName, String selector, boolean isAppend) {
-        super(selector);
-        Assert.notHasText(fieldName,"fieldName must be not null");
-        this.fieldName = fieldName;
-        this.isAppend = isAppend;
-    }
-
-    public StaticTextProcedure(String fieldName, String value) {
-        this.fieldName = fieldName;
-        this.value = value;
+    @Override
+    public void afterProperties() {
+        Assert.notHasText(fieldName, "fieldName must be not empty");
+        if(StringUtil.isEmpty(value)) {
+            super.afterProperties();
+        }
     }
 
     @Override
@@ -50,7 +50,7 @@ public class StaticTextProcedure extends StaticProcedure {
         }else {
             if(value instanceof String) {
                 String text = Jsoup.clean(element.html(), "", Whitelist.none(), new Document.OutputSettings().prettyPrint(false));
-                newValue = ((String)value) + text + separator;
+                newValue = value + text + separator;
             }else {
                 throw new BambooRuntimeException(String.format("fieldName[%s]对应value[%s]不支持追加", fieldName, value));
             }

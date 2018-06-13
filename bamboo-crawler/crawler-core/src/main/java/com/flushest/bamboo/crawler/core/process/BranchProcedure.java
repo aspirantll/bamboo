@@ -3,6 +3,7 @@ package com.flushest.bamboo.crawler.core.process;
 import com.flushest.bamboo.common.framework.exception.BambooRuntimeException;
 import com.flushest.bamboo.crawler.core.ThreadLocalManager;
 import com.flushest.bamboo.framework.util.Assert;
+import lombok.Setter;
 
 import java.util.regex.Pattern;
 
@@ -11,21 +12,17 @@ import java.util.regex.Pattern;
  * Created by Administrator on 2018/1/18 0018.
  */
 public class BranchProcedure implements Procedure {
-
+    @Setter
     private String field;
+    @Setter
     private String operation;
+    @Setter
     private String threshold;
 
-    private ElementSelector elementSelector;
-
-    public BranchProcedure(String field, String operation, String threshold) {
+    public void afterProperties() {
         Assert.notNull(field, "field must be not null");
         Assert.notNull(operation, "operation must be not null");
         Assert.notNull(threshold, "threshold must be not null");
-
-        this.field = field;
-        this.operation = operation;
-        this.threshold = threshold;
     }
 
     @Override

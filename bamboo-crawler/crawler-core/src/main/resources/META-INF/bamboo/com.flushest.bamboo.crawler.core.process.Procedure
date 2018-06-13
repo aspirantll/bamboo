@@ -1,0 +1,7 @@
+ClickProcedure=com.flushest.bamboo.crawler.core.process.dynamics.ClickProcedure
+InputProcedure=com.flushest.bamboo.crawler.core.process.dynamics.InputProcedure
+SinkHtmlProcedure=com.flushest.bamboo.crawler.core.process.dynamics.SinkHtmlProcedure
+DynamicTextProcedure=com.flushest.bamboo.crawler.core.process.dynamics.DynamicTextProcedure
+BranchProcedure=com.flushest.bamboo.crawler.core.process.BranchProcedure
+StaticTextProcedure=com.flushest.bamboo.crawler.core.process.statics.StaticTextProcedure
+SinkFileProcedure=com.flushest.bamboo.crawler.core.process.statics.SinkFileProcedure

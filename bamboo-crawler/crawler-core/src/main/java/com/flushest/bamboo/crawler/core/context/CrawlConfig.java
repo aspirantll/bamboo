@@ -1,8 +1,5 @@
 package com.flushest.bamboo.crawler.core.context;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
@@ -96,6 +93,11 @@ public class CrawlConfig {
 
     public void addSeeds(String... seeds) {
         for(String seed : seeds) {
+            this.seeds.add(seed);
+        }
+    }
+    public void setSeeds(String seeds) {
+        for(String seed : seeds.split(",")) {
             this.seeds.add(seed);
         }
     }

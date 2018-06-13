@@ -1,5 +1,7 @@
 package com.flushest.htmlunit.test;
 
+import com.flushest.bamboo.crawler.core.chain.Task;
+import com.flushest.bamboo.crawler.core.parser.ClasspathXmlParser;
 import com.flushest.bamboo.framework.util.ClassUtil;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.Page;
@@ -9,9 +11,12 @@ import com.gargoylesoftware.htmlunit.html.*;
 import org.junit.Test;
 import org.w3c.dom.NamedNodeMap;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Administrator on 2017/11/13 0013.
@@ -19,8 +24,27 @@ import java.net.URL;
 public class WebClientTest {
     @Test
     public void test() throws IOException {
-        String filePath = "META-INF/bamboo/com.flushest.bamboo.crawler.core.storage.Storage";
-        System.out.println(ClassUtil.scanFile(filePath).length);
+        String regex = "^(\\d+)、";
+        Pattern pattern = Pattern.compile(regex);
+
+        BufferedReader bufferedReader = new BufferedReader(new FileReader("D:\\outputDirectory\\1\\我是大玩家-1517137847770.txt"));
+        String line;
+
+        PrintWriter printWriter = new PrintWriter(new FileWriter("D:\\outputDirectory\\1\\我是大玩家.txt"));
+
+        while (null != (line = bufferedReader.readLine())) {
+            Matcher matcher = pattern.matcher(line);
+            if(matcher.find()) {
+                String no = matcher.group(1);
+                line = line.replaceFirst(regex, "第"+no+"章  ");
+            }
+            printWriter.write(line + "\n");
+        }
+
+        bufferedReader.close();
+        printWriter.close();
+
+
     }
     @Test
     public void windowTest() throws IOException {

@@ -1,10 +1,8 @@
 package com.flushest.bamboo.crawler.core;
 
-import com.flushest.bamboo.crawler.core.chain.BinaryTreeNode;
 import com.flushest.bamboo.crawler.core.chain.Chain;
-import com.flushest.bamboo.crawler.core.chain.Task;
 import com.flushest.bamboo.crawler.core.context.CrawlConfig;
-import com.flushest.bamboo.crawler.core.process.InputProcedure;
+import com.flushest.bamboo.crawler.core.process.dynamics.InputProcedure;
 import com.flushest.bamboo.crawler.core.process.Procedure;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,7 +34,7 @@ public class CoreTest {
 
         config.addSeeds("https://www.miaobige.com/");
 
-        Procedure dynamicRoot = new InputProcedure("", "");
+        //Procedure dynamicRoot = new InputProcedure("", "");
 
         //BinaryTreeNode<Procedure> dynamicTree = new BinaryTreeNode<>();
 

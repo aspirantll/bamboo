@@ -64,9 +64,9 @@ public class DynamicWorker extends AbstractTerminableThread implements EventPubl
     private WebURL getUrl() throws InterruptedException {
         CrawlConfig config = task.getCrawlConfig();
         if(config.getMaxWaitTime() != null) {
-            return resourceManager.accept(task.getTaskId(), config.getMaxWaitTime(), config.getWaitTimeUnit());
+            return resourceManager.accept(task.getId(), config.getMaxWaitTime(), config.getWaitTimeUnit());
         }else {
-            return resourceManager.accept(task.getTaskId());
+            return resourceManager.accept(task.getId());
         }
     }
 

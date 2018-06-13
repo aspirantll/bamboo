@@ -1,4 +1,4 @@
-package com.flushest.bamboo.crawler.core.process;
+package com.flushest.bamboo.crawler.core.process.statics;
 
 import com.flushest.bamboo.crawler.core.ThreadLocalManager;
 import com.flushest.bamboo.crawler.core.chain.Task;
@@ -8,6 +8,7 @@ import com.flushest.bamboo.crawler.core.context.StaticContext;
 import com.flushest.bamboo.crawler.core.context.TextFile;
 import com.flushest.bamboo.crawler.core.frontier.ResourceManager;
 import com.flushest.bamboo.crawler.core.frontier.ResourceManagerFactory;
+import lombok.Setter;
 
 import java.io.File;
 import java.util.Map;
@@ -15,13 +16,22 @@ import java.util.Map;
 /**
  * Created by Administrator on 2018/1/18 0018.
  */
-public class SinkFileProduce extends StaticProcedure {
+public class SinkFileProcedure extends StaticProcedure {
 
     private ResourceManager<TextFile> textFileResourceManager;
+    @Setter
+    private String destFileName;
+    @Setter
+    private String contentField;
 
-    public SinkFileProduce() {
+    public SinkFileProcedure() {
         textFileResourceManager = ResourceManagerFactory.getResourceManager(TextFile.class);
     }
+
+    public void afterProperties() {
+
+    }
+
 
     @Override
     public boolean process(StaticContext item) {
@@ -29,12 +39,12 @@ public class SinkFileProduce extends StaticProcedure {
         CrawlConfig config = ThreadLocalManager.contextThreadLocalManager.get().getConfig();
 
         Map<String,Object> map = ThreadLocalManager.contextThreadLocalManager.get().getContextMap();
-        String fileName = (String) map.get(FieldName.FILE_NAME);
+        String fileName = destFileName;
         if(fileName.contains("${timestamp}")) {
-            fileName.replaceAll("\\$\\{timestamp\\}", "" + task.getStartTime());
+            fileName = fileName.replaceAll("\\$\\{timestamp\\}", "" + task.getStartTime());
         }
-        return textFileResourceManager.offer(task.getTaskId(), TextFile.builder()
-                .fileName(config.getDirectory()+ File.separator + task.getTaskId() +File.separator + fileName)
-                .content((String)map.get(FieldName.CONTENT)).build());
+        return textFileResourceManager.offer(task.getId(), TextFile.builder()
+                .fileName(config.getDirectory()+ File.separator + task.getId() +File.separator + fileName)
+                .content((String)map.get(contentField)).build());
     }
 }

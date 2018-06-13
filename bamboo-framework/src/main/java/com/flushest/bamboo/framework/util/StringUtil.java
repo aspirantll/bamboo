@@ -54,4 +54,19 @@ public class StringUtil extends StringUtils {
 
         return stringBuffer.toString();
     }
+
+    /**
+     * 首字母转大写
+     * @param src
+     * @return
+     */
+    public static String upperCaseInitial(String src) {
+        if(!hasText(src)) return src;
+
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append(src.substring(0,1).toUpperCase());
+        stringBuffer.append(src.substring(1,src.length()));
+
+        return stringBuffer.toString();
+    }
 }

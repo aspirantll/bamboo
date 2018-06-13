@@ -1,5 +1,6 @@
 package com.flushest.bamboo.framework.util;
 
+import com.flushest.bamboo.common.framework.exception.BambooRuntimeException;
 import com.flushest.bamboo.framework.resource.ResourceResolverUtil;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.io.Resource;
@@ -12,11 +13,11 @@ import org.springframework.util.ClassUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by Administrator on 2017/10/14 0014.
@@ -133,4 +134,55 @@ public class ClassUtil extends ClassUtils{
     public static MetadataReader getMetadataReader(Resource resource) throws IOException {
         return metadataReaderFactory.getMetadataReader(resource);
     }
-}
+
+    public static <T> T assemblyClass(T targetObj, Map<String, Object> propertiesMap) {
+        Class targetClass = targetObj.getClass();
+        for (Map.Entry<String, Object> entry : propertiesMap.entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            String setMethodName = "set" + StringUtil.upperCaseInitial(key);
+            try {
+                List<Method> methods = findMethodsByName(targetClass, setMethodName, 1);
+                if (methods.isEmpty()) {
+                    continue;
+                }
+                methods.get(0).invoke(targetObj, TypeConverter.convert(value, methods.get(0).getParameterTypes()[0]));
+            } catch (IllegalAccessException e) {
+                throw new BambooRuntimeException("failed to assembly class[" + targetClass.getName() + "], propertiesMap:" + propertiesMap, e);
+            } catch (InvocationTargetException e) {
+                throw new BambooRuntimeException("failed to assembly class[" + targetClass.getName() + "], propertiesMap:" + propertiesMap, e);
+            }
+        }
+        return targetObj;
+    }
+
+    public static void invoke(Object object, String methodName, Object... args) {
+        try {
+            Method method = object.getClass().getMethod(methodName);
+            method.invoke(object, args);
+        } catch (NoSuchMethodException e) {
+            throw new BambooRuntimeException("no such method[" + methodName + "] in class[" + object.getClass().getName() + "]", e);
+        } catch (IllegalAccessException e) {
+            throw new BambooRuntimeException("cannot access method[" + methodName + "] in class[" + object.getClass().getName() + "]", e);
+        } catch (InvocationTargetException e) {
+            throw new BambooRuntimeException("cannot invoke method[" + methodName + "] in class[" + object.getClass().getName() + "]", e);
+        }
+    }
+
+    public static List<Method> findMethodsByName(Class clazz, String methodName) {
+        List<Method> result = new ArrayList<>();
+        for(Method method : clazz.getMethods()) {
+            if(method.getName().equals(methodName)) {
+                result.add(method);
+            }
+        }
+        return result;
+    }
+
+    public static List<Method> findMethodsByName(Class clazz, String methodName, int paramCount) {
+        return findMethodsByName(clazz, methodName)
+                .stream()
+                .filter(m -> m.getParameterTypes().length == paramCount)
+                .collect(Collectors.toList());
+    }
+    }

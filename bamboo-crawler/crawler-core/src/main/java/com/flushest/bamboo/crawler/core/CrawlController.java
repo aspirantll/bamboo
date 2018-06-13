@@ -31,7 +31,7 @@ public class CrawlController {
 
     public void addTask(Task task) {
         Assert.notNull(task, "task must be not null");
-        tasks.putIfAbsent(task.getTaskId(), task);
+        tasks.putIfAbsent(task.getId(), task);
     }
 
     public void start(Task task) {

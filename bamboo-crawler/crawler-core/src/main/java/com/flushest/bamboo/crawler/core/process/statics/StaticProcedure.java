@@ -1,7 +1,10 @@
-package com.flushest.bamboo.crawler.core.process;
+package com.flushest.bamboo.crawler.core.process.statics;
 
 import com.flushest.bamboo.crawler.core.context.CrawContext;
 import com.flushest.bamboo.crawler.core.context.StaticContext;
+import com.flushest.bamboo.crawler.core.process.ElementSelector;
+import com.flushest.bamboo.crawler.core.process.Procedure;
+import lombok.Setter;
 import org.jsoup.nodes.Element;
 
 import java.util.Arrays;
@@ -12,15 +15,11 @@ import java.util.List;
  */
 public abstract class StaticProcedure implements Procedure<StaticContext> {
 
+    @Setter
     protected String selector;
     private StaticElementSelector elementSelector;
 
-    protected StaticProcedure() {
-
-    }
-
-    protected StaticProcedure(String selector) {
-        this.selector = selector;
+    public void afterProperties() {
         elementSelector = new StaticElementSelector(selector);
     }
 

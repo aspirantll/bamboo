@@ -10,6 +10,9 @@ public class TypeConverter {
 
     public static <S,T> T convert(S source, Class<T> targetClass) {
         if(source == null) return null;
+        if(source.getClass().equals(targetClass)  || source.getClass().isAssignableFrom(targetClass)) {
+            return (T) source;
+        }
         Assert.notNull(targetClass,"targetClass must not be null");
         return typeConverter.convertIfNecessary(source,targetClass);
     }

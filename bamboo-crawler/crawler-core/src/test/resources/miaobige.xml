@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task xmlns="http://www.bamboo.com.cn"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.bamboo.com.cn crawler-task.xsd">
+<Task id="" name="" desc="">
+    <CrawlConfig>
+        <property name="" value=""></property>
+        <property name="" value=""></property>
+    </CrawlConfig>
+    <DynamicChain>
+        <ClickProcedure id="" selector="" strictLevel="" next="">
+
+        </ClickProcedure>
+        <InputProcedure id="" selector="" inputValue="" next="">
+
+        </InputProcedure>
+        <SinkHtmlProcedure id="" next=""></SinkHtmlProcedure>
+        <DynamicTextProcedure id="" fieldName="" selector="" next="">
+
+        </DynamicTextProcedure>
+        <BranchProcedure id="" field="" operation="" threshold="" failBranch="" next=""></BranchProcedure>
+    </DynamicChain>
+    <StaticChain>
+        <StaticTextProcedure id="" fieldName="" selector="" value="" next="">
+
+        </StaticTextProcedure>
+        <StaticFileProdure id="" destFileName="" contentField="" next=""></StaticFileProdure>
+        <BranchProcedure id="" field="" operation="" threshold="" failBranch="" trueBranch=""></BranchProcedure>
+
+    </StaticChain>
+
+</Task>

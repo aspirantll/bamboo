@@ -1,6 +1,8 @@
-package com.flushest.bamboo.crawler.core.process;
+package com.flushest.bamboo.crawler.core.process.dynamics;
 
 import com.flushest.bamboo.common.framework.exception.BambooBusinessException;
+import com.flushest.bamboo.crawler.core.process.ElementSelector;
+import com.flushest.bamboo.crawler.core.process.ProcedureUtil;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -15,14 +17,6 @@ import java.io.IOException;
  */
 @Slf4j
 public class ClickProcedure extends DynamicProcedure {
-
-    public ClickProcedure(String selector) {
-        super(selector, ElementSelector.StrictLevel.UNIQUE);
-    }
-
-    public ClickProcedure(String selector, ElementSelector.StrictLevel strictLevel) {
-        super(selector, strictLevel);
-    }
 
     @Override
     protected boolean execute(HtmlPage page) {

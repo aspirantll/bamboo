@@ -61,9 +61,9 @@ public class StaticWorker extends AbstractTerminableThread {
     private Page getPage() throws InterruptedException {
         CrawlConfig config = task.getCrawlConfig();
         if(config.getMaxWaitTime() != null) {
-            return resourceManager.accept(task.getTaskId(), config.getMaxWaitTime(), config.getWaitTimeUnit());
+            return resourceManager.accept(task.getId(), config.getMaxWaitTime(), config.getWaitTimeUnit());
         }else {
-            return resourceManager.accept(task.getTaskId());
+            return resourceManager.accept(task.getId());
         }
     }
 

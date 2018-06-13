@@ -57,6 +57,7 @@ public abstract class AbstractTerminableThread extends Thread implements Termina
         } catch (Exception e) {
             //使线程能够响应interrupt调用而退出
             ex = e;
+            log.error("occurred error during thread running", e);
         } finally {
             try {
                 doCleanup(ex);

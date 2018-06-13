@@ -1,14 +1,15 @@
-package com.flushest.bamboo.crawler.core.process;
+package com.flushest.bamboo.crawler.core.process.dynamics;
 
 import com.flushest.bamboo.common.crawler.exception.UnsupportedPageTypeException;
 import com.flushest.bamboo.crawler.core.context.DynamicContext;
+import com.flushest.bamboo.crawler.core.process.ElementSelector;
+import com.flushest.bamboo.crawler.core.process.Procedure;
 import com.flushest.bamboo.framework.util.StringUtil;
 import com.gargoylesoftware.htmlunit.Page;
-import com.gargoylesoftware.htmlunit.WebWindow;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -18,13 +19,18 @@ import java.util.stream.Collectors;
  * Created by Administrator on 2017/11/19 0019.
  */
 public abstract class DynamicProcedure implements Procedure<DynamicContext> {
-
+    @Setter
     protected String selector;
+    @Setter
+    protected int strictLevel;
     private DynamicElementSelector elementSelector;
 
-    protected DynamicProcedure(String selector, ElementSelector.StrictLevel strictLevel) {
-        this.selector = selector;
-        elementSelector = new DynamicElementSelector(selector,strictLevel);
+    protected DynamicProcedure() {
+
+    }
+
+    public void afterProperties() {
+        elementSelector = new DynamicElementSelector(selector, ElementSelector.StrictLevel.values()[strictLevel]);
     }
 
     protected abstract boolean execute(HtmlPage page);

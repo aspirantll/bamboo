@@ -1,10 +1,12 @@
-package com.flushest.bamboo.crawler.core.process;
+package com.flushest.bamboo.crawler.core.process.dynamics;
 
 import com.flushest.bamboo.crawler.core.context.Page;
 import com.flushest.bamboo.crawler.core.frontier.ResourceManager;
 import com.flushest.bamboo.crawler.core.frontier.ResourceManagerFactory;
+import com.flushest.bamboo.crawler.core.process.ElementSelector;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -13,12 +15,8 @@ import java.util.List;
  */
 public class SinkHtmlProcedure extends DynamicProcedure {
 
+    @Setter
     private String taskId;
-
-    public SinkHtmlProcedure(String selector, String taskId) {
-        super(selector, ElementSelector.StrictLevel.NONE);
-        this.taskId = taskId;
-    }
 
     @Override
     protected boolean execute(HtmlPage page) {

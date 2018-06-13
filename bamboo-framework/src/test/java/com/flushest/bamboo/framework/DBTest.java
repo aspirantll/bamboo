@@ -4,6 +4,7 @@ import com.flushest.bamboo.framework.dao.AnotherDao;
 import com.flushest.bamboo.framework.dao.UserDao;
 import com.flushest.bamboo.framework.initcfg.StartUpCoreConfig;
 import com.flushest.bamboo.framework.model.User;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {StartUpCoreConfig.class})
 @WebAppConfiguration
+@Ignore
 public class DBTest {
 
     @Autowired
@@ -25,6 +27,7 @@ public class DBTest {
     private AnotherDao anotherDao;
 
     @Test
+    @Ignore
     public void insertTest() {
         User user = new User();
         user.setUserName("bamboo");

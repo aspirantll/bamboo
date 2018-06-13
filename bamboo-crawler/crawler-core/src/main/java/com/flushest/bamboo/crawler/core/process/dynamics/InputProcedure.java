@@ -1,19 +1,17 @@
-package com.flushest.bamboo.crawler.core.process;
+package com.flushest.bamboo.crawler.core.process.dynamics;
 
 import com.flushest.bamboo.common.framework.exception.BambooBusinessException;
+import com.flushest.bamboo.crawler.core.process.ElementSelector;
 import com.gargoylesoftware.htmlunit.html.*;
+import lombok.Setter;
 
 /**
  * Created by Administrator on 2017/12/7 0007.
  */
 public class InputProcedure extends DynamicProcedure {
 
+    @Setter
     private String inputValue;
-
-    public InputProcedure(String selector, String inputValue) {
-        super(selector, ElementSelector.StrictLevel.UNIQUE);
-        this.inputValue = inputValue;
-    }
 
     @Override
     protected boolean execute(HtmlPage page) {

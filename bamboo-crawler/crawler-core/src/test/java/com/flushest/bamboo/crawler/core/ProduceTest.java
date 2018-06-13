@@ -5,12 +5,19 @@ import com.flushest.bamboo.crawler.core.chain.Chain;
 import com.flushest.bamboo.crawler.core.chain.Task;
 import com.flushest.bamboo.crawler.core.constant.FieldName;
 import com.flushest.bamboo.crawler.core.context.CrawlConfig;
+import com.flushest.bamboo.crawler.core.parser.ClasspathXmlParser;
 import com.flushest.bamboo.crawler.core.process.*;
+import com.flushest.bamboo.crawler.core.process.dynamics.ClickProcedure;
+import com.flushest.bamboo.crawler.core.process.dynamics.SinkHtmlProcedure;
+import com.flushest.bamboo.crawler.core.process.statics.SinkFileProcedure;
+import com.flushest.bamboo.crawler.core.process.statics.StaticTextProcedure;
 import com.flushest.bamboo.framework.initcfg.StartUpCoreConfig;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.List;
 
 /**
  * Created by Administrator on 2018/1/20 0020.
@@ -20,7 +27,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class ProduceTest {
 
     private CrawlController crawlController;
+
     @Test
+    public void test() throws Exception {
+
+    }
+    /*@Test
     public void test() throws Exception {
 
         CrawlConfig config = new CrawlConfig();
@@ -28,10 +40,10 @@ public class ProduceTest {
         config.setLoadJsEngine(false);
         config.setLoadCssEngine(false);
         //config.addSeeds("https://www.miaobige.com/");
-        config.addSeeds("https://www.miaobige.com/read/15046/");
-        config.setMaxWaitTime(60000L);
+        config.addSeeds("https://www.miaobige.com/read/19591/");
+        config.setMaxWaitTime(600000L);
         config.setClientInterval(300000L);
-/*
+*//*
         InputProcedure inputProcedure = new InputProcedure("[id=key]", "大文豪");
         BinaryTreeNode<Procedure> root = new BinaryTreeNode<>(inputProcedure);
 
@@ -41,9 +53,9 @@ public class ProduceTest {
 
         ClickProcedure clickProcedure1 = new ClickProcedure("a[text=大文豪]");
         BinaryTreeNode<Procedure> rLL = new BinaryTreeNode<>(clickProcedure1);
-        rL.setLeftSubtree(rLL);*/
+        rL.setLeftSubtree(rLL);*//*
 
-        ClickProcedure clickProcedure2 = new ClickProcedure("a[text=第一章 骗子]");
+        ClickProcedure clickProcedure2 = new ClickProcedure("a[text=第一章 大帝重生]");
         BinaryTreeNode<Procedure> rLLL = new BinaryTreeNode<>(clickProcedure2);
         //rLL.setLeftSubtree(rLLL);
 
@@ -51,38 +63,40 @@ public class ProduceTest {
         BinaryTreeNode<Procedure> rLLLL = new BinaryTreeNode<>(branchProcedure);
         rLLL.setLeftSubtree(rLLLL);
 
+        RefreshProcedure refreshProcedure = new RefreshProcedure();
+        BinaryTreeNode<Procedure> refresh = new BinaryTreeNode<>(refreshProcedure);
+        rLLLL.setLeftSubtree(refresh);
+
         SinkHtmlProcedure sinkHtmlProcedure = new SinkHtmlProcedure("[id=center]","1");
         BinaryTreeNode<Procedure> rLLLLL = new BinaryTreeNode<>(sinkHtmlProcedure);
-        rLLLL.setLeftSubtree(rLLLLL);
+        refresh.setLeftSubtree(rLLLLL);
 
         BinaryTreeNode<Procedure> next = new BinaryTreeNode<>(new ClickProcedure("a[text=下一章]", ElementSelector.StrictLevel.NONE));
         rLLLLL.setLeftSubtree(next);
         next.setLeftSubtree(rLLLL);
 
-        BinaryTreeNode<Procedure> fileName = new BinaryTreeNode<>( new StaticTextProcedure(FieldName.FILE_NAME, "天道图书馆.txt"));
         BinaryTreeNode<Procedure> title =  new BinaryTreeNode<>(new StaticTextProcedure(FieldName.CONTENT, "h1", true));
-        fileName.setLeftSubtree(title);
 
         BinaryTreeNode<Procedure> content = new BinaryTreeNode<>(new StaticTextProcedure(FieldName.CONTENT, "[id=content]", true));
         title.setLeftSubtree(content);
 
-        BinaryTreeNode<Procedure> sink = new BinaryTreeNode<>(new SinkFileProduce());
+        BinaryTreeNode<Procedure> sink = new BinaryTreeNode<>(new SinkFileProcedure("皇帝.txt", FieldName.CONTENT));
         content.setLeftSubtree(sink);
 
 
 
-        Task task = new Task("1", config, new Chain<>(rLLL), new Chain<>(fileName));
+        Task task = new Task("1", config, new Chain<>(rLLL), new Chain<>(title));
 
         task.start();
 
         task.getDynamicWorkers().get(0).join();
 
-        /*StaticWorker staticWorker = new StaticWorker(task);
+        *//*StaticWorker staticWorker = new StaticWorker(task);
         staticWorker.start();
-        staticWorker.join();*/
+        staticWorker.join();*//*
 
 
-    }
+    }*/
 /*
 
     @Test
@@ -168,6 +182,18 @@ public class ProduceTest {
         }
     }
 */
+
+
+    @Test
+    public void testXml() throws InterruptedException {
+        ClasspathXmlParser parser = new ClasspathXmlParser("classpath:test.xml");
+        List<Task> tasks = parser.parse();
+        Task task = tasks.get(0);
+
+        task.start();
+
+        task.getDynamicWorkers().get(0).join();
+    }
 
 
 }

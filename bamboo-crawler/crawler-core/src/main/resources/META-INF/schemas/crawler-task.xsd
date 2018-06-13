@@ -1,0 +1,144 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://www.bamboo.com.cn"
+           xmlns="http://www.bamboo.com.cn"
+           elementFormDefault="qualified">
+
+    <xs:complexType name="procedure">
+        <xs:attribute name="id" use="required"/>
+        <xs:attribute name="left" use="required"/>
+    </xs:complexType>
+    <xs:simpleType name="strictLevel">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="0"/>
+            <xs:enumeration value="1"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:element name="Tasks">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Task" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:all>
+                            <xs:element name="CrawlConfig">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="property" maxOccurs="unbounded">
+                                            <xs:complexType>
+                                                <xs:attribute name="name" type="xs:string" />
+                                                <xs:attribute name="value" type="xs:string" />
+                                            </xs:complexType>
+                                        </xs:element>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="DynamicChain">
+                                <xs:complexType>
+                                    <xs:choice maxOccurs="unbounded" minOccurs="0">
+                                        <xs:element name="ClickProcedure" minOccurs="0" maxOccurs="unbounded">
+                                            <xs:complexType>
+                                                <xs:complexContent>
+                                                    <xs:restriction base="procedure">
+                                                        <xs:attribute name="selector" use="required" type="xs:string"/>
+                                                        <xs:attribute name="strictLevel" use="optional" type="strictLevel" default="1"/>
+                                                    </xs:restriction>
+                                                </xs:complexContent>
+                                            </xs:complexType>
+                                        </xs:element>
+                                        <xs:element name="InputProcedure" minOccurs="0" maxOccurs="unbounded">
+                                            <xs:complexType>
+                                                <xs:complexContent>
+                                                    <xs:restriction base="procedure">
+                                                        <xs:attribute name="selector" use="required" type="xs:string"/>
+                                                        <xs:attribute name="inputValue" use="required" type="xs:string"/>
+                                                    </xs:restriction>
+                                                </xs:complexContent>
+                                            </xs:complexType>
+                                        </xs:element>
+                                        <xs:element name="SinkHtmlProcedure" minOccurs="0" maxOccurs="unbounded">
+                                            <xs:complexType>
+                                                <xs:complexContent>
+                                                    <xs:restriction base="procedure">
+                                                        <xs:attribute name="selector" use="required" type="xs:string"/>
+                                                    </xs:restriction>
+                                                </xs:complexContent>
+                                            </xs:complexType>
+                                        </xs:element>
+                                        <xs:element name="DynamicTextProcedure" minOccurs="0" maxOccurs="unbounded">
+                                            <xs:complexType>
+                                                <xs:complexContent>
+                                                    <xs:restriction base="procedure">
+                                                        <xs:attribute name="selector" use="required" type="xs:string"/>
+                                                        <xs:attribute name="fieldName" use="required" type="xs:string"/>
+                                                    </xs:restriction>
+                                                </xs:complexContent>
+                                            </xs:complexType>
+                                        </xs:element>
+                                        <xs:element name="BranchProcedure" minOccurs="0" maxOccurs="unbounded">
+                                            <xs:complexType>
+                                                <xs:complexContent>
+                                                    <xs:restriction base="procedure">
+                                                        <xs:attribute name="field" use="required" type="xs:string"/>
+                                                        <xs:attribute name="operation" use="required" type="xs:string"/>
+                                                        <xs:attribute name="threshold" use="required" type="xs:string"/>
+                                                        <xs:attribute name="right" use="required" type="xs:string"/>
+                                                    </xs:restriction>
+                                                </xs:complexContent>
+                                            </xs:complexType>
+                                        </xs:element>
+                                    </xs:choice>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="StaticChain">
+                                <xs:complexType>
+                                    <xs:choice minOccurs="0" maxOccurs="unbounded">
+                                        <xs:element name="StaticTextProcedure" minOccurs="0" maxOccurs="unbounded">
+                                            <xs:complexType>
+                                                <xs:complexContent>
+                                                    <xs:restriction base="procedure">
+                                                        <xs:attribute name="selector" use="optional" type="xs:string"/>
+                                                        <xs:attribute name="fieldName" use="required" type="xs:string"/>
+                                                        <xs:attribute name="value" use="optional" type="xs:string"/>
+                                                        <xs:attribute name="isAppend" use="optional" type="xs:boolean" default="true"/>
+                                                    </xs:restriction>
+                                                </xs:complexContent>
+                                            </xs:complexType>
+                                        </xs:element>
+                                        <xs:element name="SinkFileProcedure" minOccurs="0" maxOccurs="unbounded">
+                                            <xs:complexType>
+                                                <xs:complexContent>
+                                                    <xs:restriction base="procedure">
+                                                        <xs:attribute name="destFileName" use="required" type="xs:string"/>
+                                                        <xs:attribute name="contentField" use="required" type="xs:string"/>
+                                                    </xs:restriction>
+                                                </xs:complexContent>
+                                            </xs:complexType>
+                                        </xs:element>
+                                        <xs:element name="BranchProcedure" minOccurs="0" maxOccurs="unbounded">
+                                            <xs:complexType>
+                                                <xs:complexContent>
+                                                    <xs:restriction base="procedure">
+                                                        <xs:attribute name="field" use="required" type="xs:string"/>
+                                                        <xs:attribute name="operation" use="required" type="xs:string"/>
+                                                        <xs:attribute name="threshold" use="required" type="xs:string"/>
+                                                        <xs:attribute name="right" use="required" type="xs:string"/>
+                                                    </xs:restriction>
+                                                </xs:complexContent>
+                                            </xs:complexType>
+                                        </xs:element>
+                                    </xs:choice>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:all>
+                        <xs:attribute name="id" type="xs:string" use="required"/>
+                        <xs:attribute name="name" type="xs:string"/>
+                        <xs:attribute name="desc" type="xs:string"/>
+
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+
+</xs:schema>

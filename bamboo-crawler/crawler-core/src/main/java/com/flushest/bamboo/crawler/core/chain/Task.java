@@ -22,11 +22,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Setter
 public class Task {
 
-    private String taskId;
+    private String id;
 
-    private String taskName;
+    private String name;
 
-    private String taskDesc;
+    private String desc;
 
     private Chain<Procedure> dynamicChain;
 
@@ -50,11 +50,7 @@ public class Task {
 
     protected boolean running;
 
-    public Task(String taskId,CrawlConfig crawlConfig , Chain<Procedure> dynamicChain, Chain<Procedure> staticChain) {
-        this.taskId = taskId;
-        this.dynamicChain = dynamicChain;
-        this.staticChain = staticChain;
-        this.crawlConfig = crawlConfig;
+    public Task() {
         terminationToken = new TerminationToken();
         dynamicWorkers = new ArrayList<>();
         staticWorkers = new ArrayList<>();
@@ -76,7 +72,7 @@ public class Task {
         if(seeds != null) {
             for(String seed : seeds) {
                 WebURL webURL = new WebURL(seed);
-                ResourceManagerFactory.getResourceManager(WebURL.class).offer(taskId, webURL);
+                ResourceManagerFactory.getResourceManager(WebURL.class).offer(id, webURL);
             }
         }
     }

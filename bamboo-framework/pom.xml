@@ -22,7 +22,6 @@
         <fastjson.version>1.2.29</fastjson.version>
         <jsqlparser.version>1.1</jsqlparser.version>
         <servlet.version>3.0.1</servlet.version>
-        <ojdbc.version>11.2.0.1.0</ojdbc.version>
     </properties>
 
     <dependencies>
@@ -71,11 +70,6 @@
         </dependency>
 
         <!-- 数据源驱动-->
-        <dependency>
-            <groupId>com.oracle</groupId>
-            <artifactId>ojdbc6</artifactId>
-            <version>${ojdbc.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>com.alibaba</groupId>
