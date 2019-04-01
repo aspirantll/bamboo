@@ -99,7 +99,9 @@
                                                         <xs:attribute name="selector" use="optional" type="xs:string"/>
                                                         <xs:attribute name="fieldName" use="required" type="xs:string"/>
                                                         <xs:attribute name="value" use="optional" type="xs:string"/>
-                                                        <xs:attribute name="isAppend" use="optional" type="xs:boolean" default="true"/>
+                                                        <xs:attribute name="append" use="optional" type="xs:boolean" default="true"/>
+                                                        <xs:attribute name="attrKey" use="optional" type="xs:string" default="true"/>
+                                                        <xs:attribute name="separator" use="optional" type="xs:string" default="true"/>
                                                     </xs:restriction>
                                                 </xs:complexContent>
                                             </xs:complexType>

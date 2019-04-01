@@ -5,3 +5,6 @@ DynamicTextProcedure=com.flushest.bamboo.crawler.core.process.dynamics.DynamicTe
 BranchProcedure=com.flushest.bamboo.crawler.core.process.BranchProcedure
 StaticTextProcedure=com.flushest.bamboo.crawler.core.process.statics.StaticTextProcedure
 SinkFileProcedure=com.flushest.bamboo.crawler.core.process.statics.SinkFileProcedure
+StartProcedure=com.flushest.bamboo.crawler.core.process.dynamics.StartProcedure
+SinkPictureProcedure=com.flushest.bamboo.crawler.core.process.dynamics.SinkPictureProcedure
+JSExecuteProcedure=com.flushest.bamboo.crawler.core.process.dynamics.JSExecuteProcedure

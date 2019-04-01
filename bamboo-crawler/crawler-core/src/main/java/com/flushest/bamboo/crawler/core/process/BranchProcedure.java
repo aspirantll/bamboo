@@ -34,7 +34,7 @@ public class BranchProcedure implements Procedure {
         Object value = ThreadLocalManager.contextThreadLocalManager.get().get(field);
         if(value instanceof String) {
             String strValue = (String) value;
-            int compareResult = strValue.compareTo(threshold);
+            int compareResult = strValue.trim().compareTo(threshold);
             switch (operation) {
                 case ">":
                     return compareResult > 0;

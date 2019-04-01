@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
  */
 @SPI
 public interface Storage<T> {
+    int length();
     T get() throws InterruptedException;
     T get(long timeout, TimeUnit unit) throws InterruptedException;
     boolean put(T t);

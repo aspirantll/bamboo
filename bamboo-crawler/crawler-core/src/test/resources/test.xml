@@ -1,25 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Tasks xmlns="http://www.bamboo.com.cn">
-    <Task id="1" name="novel_crawler" desc="妙笔阁小说爬虫">
+    <Task id="code" name="" desc="">
         <CrawlConfig>
             <property name="directory" value="D:\outputDirectory\"/>
-            <property name="loadJsEngine" value="false"/>
+            <property name="loadJsEngine" value="true"/>
             <property name="loadCssEngine" value="false"/>
-            <property name="seeds" value="https://www.miaobige.com/read/19591/"/>
+            <property name="seeds" value="https://yz.scu.edu.cn/score"/>
             <property name="maxWaitTime" value="600000"/>
             <property name="clientInterval" value="300000"/>
         </CrawlConfig>
         <DynamicChain>
-            <ClickProcedure id="clickFirstPage" left="endJudgement" selector="a[text=第一章 大帝重生]"/>
-            <BranchProcedure id="endJudgement" left="refreshForSomePage" field="currentUrl" operation="like" threshold="%.html" right="none"/>
-            <RefreshProcedure id="refreshForSomePage" left="pickStaticPage"/>
-            <SinkHtmlProcedure id="pickStaticPage" selector="[id=center]" left="toNextPage"/>
-            <ClickProcedure id="toNextPage" left="endJudgement" selector="a[text=下一章]"/>
+            <ClickProcedure id="clickFirstPage" left="endJudgement" selector="[id=vcode]"/>
+            <BranchProcedure id="endJudgement" left="savePic" field="currentUrl" operation="like" threshold="." right="none"/>
+            <SinkPictureProcedure id="savePic" selector="[id=img]" left="clickNext" right="none"/>
+            <JSExecuteProcedure id="clickNext" left="endJudgement" statement="javascript:fun();"/>
         </DynamicChain>
-        <StaticChain>
-            <StaticTextProcedure id="findTitle" selector="h1" left="findContent" fieldName="content"/>
-            <StaticTextProcedure id="findContent" selector="[id=content]" left="toFile" fieldName="content"/>
-            <SinkFileProcedure id="toFile" left="none" destFileName="皇帝.txt" contentField="content"/>
-        </StaticChain>
     </Task>
 </Tasks>

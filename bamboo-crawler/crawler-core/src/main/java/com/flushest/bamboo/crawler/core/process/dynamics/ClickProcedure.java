@@ -1,7 +1,6 @@
 package com.flushest.bamboo.crawler.core.process.dynamics;
 
 import com.flushest.bamboo.common.framework.exception.BambooBusinessException;
-import com.flushest.bamboo.crawler.core.process.ElementSelector;
 import com.flushest.bamboo.crawler.core.process.ProcedureUtil;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;

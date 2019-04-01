@@ -8,6 +8,11 @@ import java.util.concurrent.TimeUnit;
  */
 public class DBStorage implements Storage<Map<String, Object>> {
     @Override
+    public int length() {
+        return 0;
+    }
+
+    @Override
     public Map<String, Object> get() throws InterruptedException {
         return null;
     }

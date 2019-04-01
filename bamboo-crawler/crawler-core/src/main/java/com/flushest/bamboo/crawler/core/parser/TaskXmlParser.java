@@ -102,6 +102,8 @@ public class TaskXmlParser implements TaskParser{
     }
 
     protected Chain getChain(Element element, Map<String, Object> parentProperties) {
+        if(element==null) return null;
+
         Map<String, ProcedureNode> procedureNodeMap = parseProcedures(element, parentProperties);
         ProcedureNode root = findRoot(procedureNodeMap);
         return new Chain(initProcedureTree(root, procedureNodeMap, new HashMap<>()));

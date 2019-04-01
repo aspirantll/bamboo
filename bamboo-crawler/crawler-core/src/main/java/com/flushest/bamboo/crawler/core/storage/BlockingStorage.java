@@ -12,6 +12,11 @@ public class BlockingStorage<T> implements Storage<T> {
 
 
     @Override
+    public int length() {
+        return queue.size();
+    }
+
+    @Override
     public T get() throws InterruptedException {
         return queue.take();
     }

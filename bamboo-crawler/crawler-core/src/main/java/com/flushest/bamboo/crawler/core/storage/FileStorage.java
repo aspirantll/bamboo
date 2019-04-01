@@ -17,6 +17,11 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class FileStorage implements Storage<TextFile> {
     @Override
+    public int length() {
+        return 0;
+    }
+
+    @Override
     public TextFile get() throws InterruptedException {
         throw new UnsupportedOperationException("unsupported method : get()");
     }

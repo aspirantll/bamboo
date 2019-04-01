@@ -12,11 +12,18 @@ import java.util.concurrent.TimeUnit;
  * Created by Administrator on 2018/1/10 0010.
  */
 public abstract class AbstractResourceManager<T> implements ResourceManager<T> {
-
     protected Map<String, Storage<T>> queueMap;
 
     public AbstractResourceManager() {
         queueMap = new HashMap<>();
+    }
+
+    public int remainNum(String key) {
+        if(queueMap.containsKey(key)) {
+            return queueMap.get(key).length();
+        }else {
+            return 0;
+        }
     }
 
     protected Storage<T> getQueueStorage(String key) {
